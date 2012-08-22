@@ -11,19 +11,26 @@ Utilisation
 #### Commandes
 
 Il n'y a que quatre options :
-* démarrer des applications (toutes si aucun argument)
+- démarrer des applications (toutes si aucun argument)
+
 ```bash
 $ ewapp start [appname1] [appname2] [...]
 ```
-* arrêter des applications (toutes si aucun argument)
+
+- arrêter des applications (toutes si aucun argument)
+
 ```bash
 $ ewapp stop [appname1] [appname2] [...]
 ```
-* redémarrer des applications (toutes si aucun argument)
+
+- redémarrer des applications (toutes si aucun argument)
+
 ```bash 
 $ ewapp restart [appname1] [appname2] [...]
 ```
-* connaitre l'état d'applications (toutes si aucun argument)
+
+- connaitre l'état d'applications (toutes si aucun argument)
+
 ```bash 
 $ ewapp state [appname1] [appname2] [...]
 ```
