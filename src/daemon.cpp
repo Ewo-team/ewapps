@@ -83,6 +83,6 @@ void Daemon::displayUsage(){
     std::cerr << "usage : ewo-app [action]" << std::endl;
     std::cerr << "  action :" << std::endl;
     std::cerr << "    --stop   : stop the daemon " << std::endl;
-    std::cerr << "    --reload : recharge les application " << std::endl;
-    std::cerr << "    --state  : donne l'état du daemon' " << std::endl;
+    std::cerr << "    --reload : reload appications " << std::endl;
+    std::cerr << "    --state  : return state of applications " << std::endl;
 }
