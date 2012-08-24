@@ -4,19 +4,6 @@
 #
 #-------------------------------------------------
 
-QT       += core
-QT       -= gui
 
-TARGET = ewo-app
-CONFIG   += console
-CONFIG   -= app_bundle
-
-TEMPLATE = app
-
-SOURCES += src/main.cpp \
-    src/daemon.cpp
-
-include(libs/qt-solutions/qtsingleapplication/src/qtsinglecoreapplication.pri)
-
-HEADERS += \
-    src/daemon.hpp
+TEMPLATE = subdirs
+SUBDIRS = ewapp-service ewapp
