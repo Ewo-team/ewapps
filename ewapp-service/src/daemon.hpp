@@ -10,65 +10,48 @@
 
 #include <QObject>
 #include <QStringList>
-#include "qtsinglecoreapplication.h"
+#include <QMap>
+#include "qtservice.h"
+
+class Apps;
 
 /*!
  * @brief classe principale
  * C'est une classe qui va gérer le cycle de vie du daemon
  */
-class Daemon : public QtSingleCoreApplication{
-    Q_OBJECT
-
-protected:
-    QStringList args;
+class Daemon : public QtService<QCoreApplication>{
 
 
-public:
-    /*!
+    protected:
+        QStringList args;
+        QMap<QString, Apps*> apps;
+
+    public:
+
+        static const QString SERVICE_NAME;
+
+
+    public:
+        /*!
      * @brief constructeur
      *
      * @param argc arguments count
      * @param argv[] arguments values
      */
-    explicit Daemon(int argc, char *argv[]);
+        explicit Daemon(int argc, char *argv[]);
 
-    /*!
+        /*!
      * @brief destructeur
      *
      */
-    ~Daemon();
+        ~Daemon();
 
-    /*!
-     * @brief run the application
-     *
-     * @return int le status de retour de l'application
-     */
-    int run();
-
-protected:
-    /*!
-     * @brief fonction appelée si le daemon est déjà lancé
-     *
-     * @return int
-     */
-    void handleNewArgs();
-
-
-
-    /*!
-     * @brief affiche l'utilisation de la commande
-     *
-     */
-    void displayUsage();
-signals:
-    
-public slots:
-    /*!
-     * @brief gestion des messages reçus
-     *
-     * @param message message à traiter.
-     */
-    void handleCommand(const QString& message);
+    protected:
+        void start();
+        void stop();
+        void pause();
+        void resume();
+        void processCommand(int code);
 };
 
 #endif // DAEMON_HPP

@@ -11,14 +11,14 @@ TARGET = ewapp
 CONFIG   += console
 CONFIG   -= app_bundle
 
-TEMPLATE = subdirs
-SUBDIRS = ewapp-service ewapp
+TEMPLATE = app
 
 SOURCES += src/main.cpp \
     src/controller.cpp
 
 HEADERS += \
     src/controller.hpp
+
 
 
 include(../libs/qt-solutions/qtsingleapplication/src/qtsinglecoreapplication.pri)

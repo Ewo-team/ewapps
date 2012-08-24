@@ -9,6 +9,7 @@
 #define CONTROLLER_HPP
 
 #include <QStringList>
+#include <QLatin1String>
 #include "qtservice.h"
 
 /**
@@ -16,6 +17,19 @@
  *
  */
 class Controller : public QtServiceController{
+
+    protected:
+        QStringList args;
+
+    public:
+        static const QString START;
+        static const QString STOP;
+        static const QString RESTART;
+        static const QString RELOAD;
+        static const QString STATE;
+
+        static const QString SERVICE_NAME;
+
     public:
 
         /**
@@ -35,12 +49,14 @@ class Controller : public QtServiceController{
          */
         ~Controller();
 
-    protected:
 
-        /*!
-         * @brief gestion des arguments
+        /**
+         * @brief lance le controler
+         *
          */
-        void handleNewArgs();
+        void run();
+
+    protected:
 
         /**
          * @brief gestion de la méthode start
@@ -55,6 +71,13 @@ class Controller : public QtServiceController{
          * @param appsList liste des applications à stoper
          */
         void handleStop(QStringList appsList);
+
+        /**
+         * @brief gestion de la méthode restart
+         *
+         * @param appsList liste des applications à demmarer
+         */
+        void handleRestart(QStringList appsList);
 
         /**
          * @brief gestion des applications à recharger
@@ -78,5 +101,6 @@ class Controller : public QtServiceController{
          */
         void displayUsage();
 };
+
 
 #endif // CONTROLLER_HPP

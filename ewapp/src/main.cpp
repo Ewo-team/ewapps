@@ -7,7 +7,7 @@
 
 #include <QtCore/QDebug>
 #include <iostream>
-#include "daemon.hpp"
+#include "controller.hpp"
 
 
 /*!
@@ -18,7 +18,7 @@
  * @return int
  */
 int main(int argc, char *argv[]){
-    Daemon app(argc, argv);
+    Controller app(argc, argv);
 
     app.run();
 }

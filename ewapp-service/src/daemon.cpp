@@ -7,82 +7,40 @@
 
 #include "daemon.hpp"
 #include <iostream>
-#include<QtCore/QDebug>
+#include <QObject>
 
 
-Daemon::Daemon(int argc, char *argv[]) : QtSingleCoreApplication(argc, argv){
+#ifndef DAEMON_CST
+#define DAEMON_CST
+//init constantes
+const QString Daemon::SERVICE_NAME   = QLatin1String("ewapp-service");
+#endif
 
-    for(int i = 0; i < argc; ++i){
-        this->args.append(argv[i]);
-    }
+Daemon::Daemon(int argc, char *argv[]) :QtService<QCoreApplication>(argc, argv, SERVICE_NAME){
+    this->setServiceDescription(QObject::tr("Ewo apps service"));
+    setServiceFlags(QtServiceBase::CannotBeStopped);
 }
 
 Daemon::~Daemon(){
 }
 
+void Daemon::start(){
 
-int Daemon::run(){
-    if (this->isRunning()){
-        //transformation des arguments en QString
-        QString message = "";
-        int i = 0;
-        QStringList::const_iterator constIterator, endIt = this->args.end();
-        for (constIterator = this->args.constBegin(); constIterator != endIt;++constIterator){
-            //ajout du separateur
-            if(i > 1){
-                message += ",";
-            }
-            //on ajoute pas le chemin de l'exe
-            if(i > 0){
-                message += (*constIterator);
-            }
-            ++i;
-        }
-        //envoie du message
-        this->sendMessage(message);
-        return 0;
-    }
-
-    this->handleNewArgs();
-
-    QObject::connect(this, SIGNAL(messageReceived(const QString&)),
-                     this, SLOT(handleCommand(const QString&)));
-    return this->exec();
 }
 
+void Daemon::stop(){
 
-void Daemon::handleNewArgs(){
-    for(int i = 0; i < this->args.size();++i){
-        std::cout << this->args.at(i).toStdString() << std::endl;
-    }
-
-    QStringList::const_iterator constIterator, endIt = this->args.end();
-    for (constIterator = this->args.constBegin(); constIterator != endIt;++constIterator){
-       QString arg = (*constIterator);
-       if(arg.compare("--stop") == 0){
-           std::cout << "arret de l'application" << std::endl;
-           this->exit();
-       }
-    }
-    //this->displayUsage();
 }
 
+void Daemon::pause(){
 
-void Daemon::handleCommand(const QString& message){
-    this->args = message.split(",", QString::SkipEmptyParts);
-
-    for(int i = 0; i < this->args.size();++i){
-        std::cout << this->args.at(i).toStdString() << std::endl;
-    }
-    this->handleNewArgs();
 }
 
+void Daemon::resume(){
 
-
-void Daemon::displayUsage(){
-    std::cerr << "usage : ewo-app [action]" << std::endl;
-    std::cerr << "  action :" << std::endl;
-    std::cerr << "    --stop   : stop the daemon " << std::endl;
-    std::cerr << "    --reload : recharge les application " << std::endl;
-    std::cerr << "    --state  : donne l'état du daemon' " << std::endl;
 }
+
+void Daemon::processCommand(int code){
+
+}
+
