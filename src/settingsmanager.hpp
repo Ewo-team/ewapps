@@ -2,19 +2,21 @@
 #define SETTINGSMANAGER_HPP
 
 #include <QObject>
-#include <QSettings>
+#include <QStringList>
 
 class SettingsManager : public QObject{
         Q_OBJECT
 
     protected:
-        QSettings *settings;
+        QStringList apps;
     public:
         SettingsManager();
         ~SettingsManager();
 
-        void setRunning(bool isRunning);
-        bool isRunning();
+
+    protected:
+        void loadConfig();
+        QString getConfigFileLocation();
 };
 
 #endif // SETTINGSMANAGER_HPP

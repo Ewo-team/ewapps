@@ -7,8 +7,6 @@
 
 #include <QSettings>
 #include <iostream>
-#include "daemon.hpp"
-#include "controller.hpp"
 #include "settingsmanager.hpp"
 
 
@@ -21,20 +19,10 @@
  * @return int
  */
 int main(int argc, char *argv[]){
+
+    /*Daemon app(argc, argv, settings);
+    return app.run();*/
     SettingsManager *settings = new SettingsManager();
-    std::cout << settings->isRunning() << std::endl;
-    if(settings->isRunning()){
-        Controller app(argc, argv);
-        return app.run();
-    }
-    else{
-        try{
-            Daemon app(argc, argv, settings);
-            return app.run();
-        }
-        catch(...){
-            settings->setRunning(false);
-        }
-    }
-    return 0;
+
+    return EXIT_SUCCESS;
 }

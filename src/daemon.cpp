@@ -22,12 +22,10 @@ Daemon::Daemon(int & argc, char ** argv,  SettingsManager *settings) :QCoreAppli
 
 Daemon::~Daemon(){
     std::cout << "ewapp killed" << std::endl;
-    this->settings->setRunning(false);
 }
 
 
 int Daemon::run(){
-    this->settings->setRunning(true);
     std::cout << QObject::tr("ewapp launched").toStdString() << std::endl;
     return this->exec();
 }

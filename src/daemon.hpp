@@ -15,7 +15,7 @@
 
 /*!
  * @brief classe principale
- * C'est une classe qui va gÈrer le cycle de vie du daemon
+ * C'est une classe qui va g√©rer le cycle de vie du daemon
  */
 class Daemon : public QCoreApplication{
         Q_OBJECT
@@ -56,7 +56,7 @@ class Daemon : public QCoreApplication{
     protected:
 
         /*!
-         * @brief fonction appelÈe si le daemon est dÈj‡ lancÈ
+         * @brief fonction appel√©e si le daemon est d√©j√† lanc√©
          *
          * @return int
          */
@@ -64,46 +64,46 @@ class Daemon : public QCoreApplication{
 
 
         /**
-         * @brief vÈrifie si les arguments sont valides
+         * @brief v√©rifie si les arguments sont valides
          *
          * @return bool
          */
         bool checkArgs();
 
         /*!
-         * @brief gestion de la mÈthode start
+         * @brief gestion de la m√©thode start
          *
-         * @param appsList liste des applications ‡ demmarer
+         * @param appsList liste des applications √† demmarer
          */
         QString handleStart(QStringList appsList);
 
         /*!
          * @brief gestion du stop d'applis
          *
-         * @param appsList liste des applications ‡ stoper
+         * @param appsList liste des applications √† stoper
          */
         QString handleStop(QStringList appsList);
 
         /*!
-         * @brief gestion de la mÈthode restart
+         * @brief gestion de la m√©thode restart
          *
-         * @param appsList liste des applications ‡ demmarer
+         * @param appsList liste des applications √† demmarer
          */
         QString handleRestart(QStringList appsList);
 
         /*!
-                 * @brief gestion des applications ‡ recharger
+                 * @brief gestion des applications √† recharger
                  *
-                 * @param appsList liste des applications ‡ recharger
+                 * @param appsList liste des applications √† recharger
                  */
         QString handleReload(QStringList appsList);
 
 
         /*!
-         * @brief gestion de la demande d'Ètat
+         * @brief gestion de la demande d'√©tat
          *
-         * @param appsList liste des applications dont on veut l'Ètat
-         * @return QString Ètat des applications
+         * @param appsList liste des applications dont on veut l'√©tat
+         * @return QString √©tat des applications
          */
         QString handleState(QStringList appsList);
 
@@ -117,7 +117,7 @@ class Daemon : public QCoreApplication{
     public slots:
 
         /*!
-         * @brief gestion des messages reÁus
+         * @brief gestion des messages re√ßus
          *
          * @param response
          */
