@@ -57,6 +57,7 @@ void Controller::run(){
 
 void Controller::handleStart(QStringList appsList){
     std::cout << QObject::tr("ewapp start").toStdString() <<std::endl;
+    this->
 }
 
 

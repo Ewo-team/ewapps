@@ -19,6 +19,4 @@ SOURCES += src/main.cpp \
 HEADERS += \
     src/daemon.hpp
 
-
-include(../libs/qt-solutions/qtsingleapplication/src/qtsinglecoreapplication.pri)
 include(../libs/qt-solutions/qtservice/src/qtservice.pri)

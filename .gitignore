@@ -10,3 +10,10 @@
 *.lai
 *.la
 *.a
+
+Makefile*
+
+debug
+release
+libs
+*.pdb
