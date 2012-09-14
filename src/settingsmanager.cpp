@@ -3,6 +3,8 @@
 #include <QFile>
 #include <QTextStream>
 
+Logger* SettingsManager::LOG = new Logger(QString(LOG_DIR)+QString(LOG_FILE), LOG_LVL);
+
 SettingsManager::SettingsManager(){
     this->loadConfig();
 }
@@ -12,32 +14,43 @@ SettingsManager::~SettingsManager(){
 
 }
 
+QString SettingsManager::getDirectory(){
+    return this->directory;
+}
+
 void  SettingsManager::loadConfig(){
-    QString filePath = this->getConfigFileLocation();
-    if(filePath.isEmpty()){
-        std::cerr << "No config file" << std::endl;
+    this->getConfigFileLocation();
+    if(this->directory.isEmpty()){
+        LOG->error(tr("No config file"));
         return;
     }
+    QString filePath = this->directory+"ewapp.conf";
     QFile configFile(filePath);
     if (!configFile.open(QIODevice::ReadOnly | QIODevice::Text)){
-        std::cerr << "Cannot open configuration file : " << filePath.toStdString() << std::endl;
+        LOG->error(tr("Cannot open configuration file : ") + filePath);
         return;
     }
 
-     QTextStream in(&configFile);
-     while (!in.atEnd()) {
+    QTextStream in(&configFile);
+    bool first = true;
+    while (!in.atEnd()) {
         QString line = in.readLine();
         if(line.trimmed().at(0) != QChar('#')){
-            std::cout << line.toStdString() << std::endl;
+            if(first){
+                first = true;
+                LOG->info(tr("Applications : "));
+            }
+            LOG->info(" "+line);
+            this->apps.push_back(line);
         }
      }
 }
 
 
-QString  SettingsManager::getConfigFileLocation(){
+void  SettingsManager::getConfigFileLocation(){
     char *cStrPath = getenv("PATH");
     if(cStrPath == NULL)
-        return QString();
+        return;
 
     QString path(cStrPath);
 
@@ -50,13 +63,14 @@ QString  SettingsManager::getConfigFileLocation(){
     foreach(dir, dirs){
         QFile file(dir+"/ewapp.conf");
         if(file.exists()){
-             return dir+"/ewapp.conf";
+                this->directory = dir+"/";
+            return;
         }
 
         QFile fileSubDir(dir+"/ewapp/ewapp.conf");
         if(fileSubDir.exists()){
-             return dir+"/ewapp/ewapp.conf";
+            this->directory = dir+"/ewapp/";
+            return;
         }
     }
-    return "";
 }

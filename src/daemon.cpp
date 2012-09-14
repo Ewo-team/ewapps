@@ -10,8 +10,6 @@
 #include <QtCore/QDebug>
 #include <QObject>
 
-
-
 Daemon::Daemon(int & argc, char ** argv,  SettingsManager *settings) :QCoreApplication(argc, argv){
     this->settings = settings;
     this->server   = new LocalSocketIpcServer(QString(DAEMON_NAME), this);
