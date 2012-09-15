@@ -22,21 +22,34 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef PLUGIN_HPP
-#define PLUGIN_HPP
+#ifndef WSCLIENT_HPP
+#define WSCLIENT_HPP
 
 #include <QObject>
+#include <QUuid>
 
-class Plugin : public QObject
-{
+/**
+ * \namespace plugin
+ */
+namespace plugin{
+
+    class Plugin;
+
+    /*!
+     * @brief Client WebSocket
+     */
+    class WsClient: public QObject{
         Q_OBJECT
-    public:
-        explicit Plugin(QObject *parent = 0);
-        
-    signals:
-        
-    public slots:
-        
-};
 
-#endif // PLUGIN_HPP
+        private:
+            QUuid uuid;
+            Plugin *plugin;
+        public:
+            WsClient(QUuid uuid, Plugin *plugin);
+
+        signals:
+            QString newMessage();
+            void close();
+    };
+}
+#endif // WSCLIENT_HPP

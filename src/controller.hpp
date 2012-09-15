@@ -5,6 +5,10 @@
 #include <QCoreApplication>
 #include <QStringList>
 
+/*!
+ * @brief controle du daemon
+ * Permet d'envoyer des commandes au daemon
+ */
 class Controller : public QCoreApplication{
         Q_OBJECT
 

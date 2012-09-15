@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////
 //
-// Ewapp
+// Virtue
 // Copyright (C) 2012 Benjamin Herbomez (benjamin.herbomez@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -22,34 +22,12 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef LOGGER_HPP
-#define LOGGER_HPP
+#include "wsclient.hpp"
+#include "plugin.hpp"
 
-#include <QString>
-
-enum LogLvl{
-    DEBUG,
-    INFO,
-    WARNING,
-    ERROR,
-    FATAL
-};
-/*!
- * @brief classe de log
- */
-class Logger{
-    private:
-        QString logFile;
-        LogLvl lvl;
-    public:
-        Logger(QString filePath, LogLvl lvl);
-
-        void log(QString message, LogLvl lvl);
-        void debug(QString message);
-        void info(QString message);
-        void warning(QString message);
-        void error(QString message);
-        void fatal(QString message);
-};
-
-#endif // LOGGER_HPP
+namespace plugin{
+    WsClient::WsClient(QUuid uuid, Plugin *plugin){
+        this->uuid      = uuid;
+        this->plugin    = plugin;
+    }
+}

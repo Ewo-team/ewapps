@@ -24,6 +24,14 @@
 
 #include "plugin.hpp"
 
-Plugin::Plugin(QObject *parent) :
-    QObject(parent){
+namespace plugin{
+    Plugin::Plugin(QObject *parent) :
+        QObject(parent){
+    }
+
+    void Plugin::handlNewConnection(QString uuid){
+        WsClient *client = new WsClient(uuid, this);
+        this->_clients.insert(uuid, client);
+        emit newConnection(client);
+    }
 }

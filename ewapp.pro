@@ -40,7 +40,8 @@ HEADERS += src/daemon.hpp \
     src/controller.hpp \
     src/clientresponse.hpp \
     src/logger.hpp \
-    src/plugin.hpp
+    src/plugin/plugin.hpp \
+    src/plugin/wsclient.hpp
 
 SOURCES += src/main.cpp \
     src/daemon.cpp \
@@ -50,7 +51,8 @@ SOURCES += src/main.cpp \
     src/controller.cpp \
     src/clientresponse.cpp \
     src/logger.cpp \
-    src/plugin.cpp
+    src/plugin/plugin.cpp \
+    src/plugin/wsclient.cpp
 
 CONFIG(release, debug|release) {
     DESTDIR = release
@@ -67,4 +69,5 @@ CONFIG(debug, debug|release) {
     RCC_DIR = debug/.rcc
     UI_DIR = debug/.ui
     DEFINES += LOG_LVL=DEBUG
+    QMAKE_CXXFLAGS += -Wall
 }

@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////
 //
-// Ewapp
+// Virtue
 // Copyright (C) 2012 Benjamin Herbomez (benjamin.herbomez@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -22,34 +22,44 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef LOGGER_HPP
-#define LOGGER_HPP
+#ifndef PLUGIN_HPP
+#define PLUGIN_HPP
 
-#include <QString>
+#include <QObject>
+#include <QtPlugin>
+#include <QMap>
+#include <QUuid>
+#include "../localsocketipcclient.hpp"
+#include "wsclient.hpp"
 
-enum LogLvl{
-    DEBUG,
-    INFO,
-    WARNING,
-    ERROR,
-    FATAL
-};
-/*!
- * @brief classe de log
+
+/**
+ * \namespace plugin
  */
-class Logger{
-    private:
-        QString logFile;
-        LogLvl lvl;
-    public:
-        Logger(QString filePath, LogLvl lvl);
+namespace plugin{
+    /*!
+     * @brief Interface d'un plugin
+     */
+    class Plugin : public QObject{
+        Q_OBJECT
+        private:
+            LocalSocketIpcClient *_localSocketIpClient;
+            QMap<QUuid, WsClient*> _clients;
 
-        void log(QString message, LogLvl lvl);
-        void debug(QString message);
-        void info(QString message);
-        void warning(QString message);
-        void error(QString message);
-        void fatal(QString message);
-};
+        public:
+            explicit Plugin(QObject *parent = 0);
 
-#endif // LOGGER_HPP
+        protected:
+
+        signals:
+            void newConnection(WsClient *newClient);
+
+        private slots:
+            void handlNewConnection(QString uuid);
+
+        public slots:
+            virtual void run() = 0;
+    };
+}
+Q_DECLARE_INTERFACE(plugin::Plugin, "Ewapp plugin interface")
+#endif // PLUGIN_HPP
