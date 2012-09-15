@@ -1,7 +1,7 @@
 ewapps
 ======
 
-version : 0.0.2
+version : 0.0.3
 
 Plateforme pour faire tourner les applications lourdes d'ewo. Elle lance un daemon qui lui même va gérer les cibles de vie des autes applications (IA, gestion d'evenments aléatoires, ...)
 
@@ -42,9 +42,9 @@ Sa structure est très simple
 ```bash
 #Un commentaire
 #chemin relatif au fichier de config
-ewia.so
+ewia
 #chemin absolu
-/usr/local/etc/ewapp/ewevent.so
+/usr/local/etc/ewapp/ewevent
 ```
 
 Creation d'un plugin
