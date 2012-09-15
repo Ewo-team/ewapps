@@ -58,7 +58,7 @@ void Logger::log(QString message, LogLvl lvl){
 
     QFile file(this->logFile);
     file.open(QIODevice::WriteOnly | QIODevice::Append);
-    QString line = date.toString()+" - "+time.toString()+message+"\n";
+    QString line = date.toString()+" - "+time.toString()+" : "+message+"\n";
     file.write((const char *)line.toAscii().data());
     file.close();
 }

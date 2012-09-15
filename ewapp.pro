@@ -10,7 +10,7 @@ QT       += core network
 QT       -= gui
 
 TARGET   = ewapp
-CONFIG   += console
+CONFIG   += console debug
 CONFIG   -= app_bundle
 
 
@@ -50,16 +50,19 @@ SOURCES += src/main.cpp \
     src/clientresponse.cpp \
     src/logger.cpp
 
-release:DESTDIR = release
-release:OBJECTS_DIR = release/.obj
-release:MOC_DIR = release/.moc
-release:RCC_DIR = release/.rcc
-release:UI_DIR = release/.ui
-release:DEFINES += LOG_LVL=INFO
-
-debug:DESTDIR = debug
-debug:OBJECTS_DIR = debug/.obj
-debug:MOC_DIR = debug/.moc
-debug:RCC_DIR = debug/.rcc
-debug:UI_DIR = debug/.ui
-debug:DEFINES += LOG_LVL=DEBUG
+CONFIG(release, debug|release) {
+    DESTDIR = release
+    OBJECTS_DIR = release/.obj
+    MOC_DIR = release/.moc
+    RCC_DIR = release/.rcc
+    UI_DIR = release/.ui
+    DEFINES += LOG_LVL=INFO
+}
+CONFIG(debug, debug|release) {
+    DESTDIR = debug
+    OBJECTS_DIR = debug/.obj
+    MOC_DIR = debug/.moc
+    RCC_DIR = debug/.rcc
+    UI_DIR = debug/.ui
+    DEFINES += LOG_LVL=DEBUG
+}

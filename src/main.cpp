@@ -6,6 +6,7 @@
  */
 
 #include <QSettings>
+#include <QFile>
 #include <iostream>
 #include "settingsmanager.hpp"
 #include <stdio.h>
@@ -15,8 +16,12 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include "daemon.hpp"
+#include "logger.hpp"
 
-int daemonize(QString directory);
+bool daemonIsRunning();
+void daemonize(QString directory, Logger *LOG );
+void signal_handler(int sig);
+void freeLockFile();
 
 /*!
  * @brief fonction main
@@ -26,14 +31,19 @@ int daemonize(QString directory);
  * @return int
  */
 int main(int argc, char *argv[]){
-
+    Logger *LOG = new Logger(QString(LOG_DIR)+QString(LOG_FILE), LOG_LVL);
     /*Daemon app(argc, argv, settings);
     return app.run();*/
     SettingsManager *settings = new SettingsManager();
     std::cout << settings->getDirectory().toStdString() << std::endl;
-    if(daemonize(settings->getDirectory()) == DAEMON){
+    if(!daemonIsRunning()){
+            std::cout << QObject::tr("Daemon started").toStdString() << std::endl;
+            daemonize(settings->getDirectory(), LOG);
             Daemon *daemon = new Daemon(argc, argv, settings);
-            return daemon->run();
+
+            int result = daemon->run();
+            freeLockFile();
+            return result;
     }
     else{
        std::cout << "controller" << std::endl;
@@ -41,37 +51,58 @@ int main(int argc, char *argv[]){
     return EXIT_SUCCESS;
 }
 
+bool daemonIsRunning(){
+    QFile lockFile(LOCK_FILE);
+    return lockFile.exists();
+}
 
-int daemonize(QString directory){
-    int i,lfp;
+void daemonize(QString directory, Logger *LOG){
+    int i;
     char str[10];
     if(getppid()==1)
-        return DAEMON; /* already a daemon */
+        return; // déjà un deamon
 
 
     i=fork();
-    if (i<0)/* fork error */
-        exit(1);
-    if (i>0)/* parent exits */
-        exit(0);
+    if (i<0)/* fork error */{
+        LOG->error(QObject::tr("Fork error"));
+        exit(EXIT_FAILURE);
+    }
+    if (i>0)/* parent */
+        exit(EXIT_SUCCESS);
 
 
-    /* child (daemon) continues */
-    setsid(); /* obtain a new process group */
+    /* Enfant */
+    setsid(); //Nouveau process group
 
-    for (i=getdtablesize();i>=0;--i) close(i); /* close all descriptors */
-        i=open("/dev/null",O_RDWR); dup(i); dup(i); /* handle standart I/O */
+    for (i=getdtablesize();i>=0;--i) close(i); // Fermeture de tous les descripteur
+        i=open("/dev/null",O_RDWR); dup(i); dup(i); // gestion de l'entrée/sortie standard
 
-    umask(027); /* set newly created file permissions */
+    umask(027);
 
-    chdir(directory.toStdString().c_str()); /* change running directory */
+    chdir(directory.toStdString().c_str()); //Changement de repertoire d'execution
+    sprintf(str,"%d\n",getpid());
+    QFile lockFile(LOCK_FILE);
+    lockFile.open(QIODevice::ReadWrite);
+    if (lockFile.write(str)<0){
+        LOG->error(QObject::tr("Error while opening lock file : ")+QString(LOCK_FILE));
+        exit(EXIT_FAILURE);
+    }
+    lockFile.close();
 
-    lfp=open(LOCK_FILE,O_RDWR|O_CREAT,0640);
-    if (lfp<0) CONTROLLER; /* can not open */
-    if (lockf(lfp,F_TLOCK,0)<0) CONTROLLER; /* can not lock */
+    signal(SIGTERM,signal_handler); //Gestion du SIGTERM
+}
 
-    write(lfp,str,strlen(str)); /* record pid to lockfile */
+void signal_handler(int sig){
+    switch(sig) {
+        case SIGTERM:
+            freeLockFile();
+        break;
+    }
+}
 
-
-    return DAEMON;
+void freeLockFile(){
+    QFile lockFile(LOCK_FILE);
+    lockFile.open(QIODevice::ReadWrite);
+    lockFile.remove();
 }
