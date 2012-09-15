@@ -39,7 +39,8 @@ HEADERS += src/daemon.hpp \
     src/settingsmanager.hpp \
     src/controller.hpp \
     src/clientresponse.hpp \
-    src/logger.hpp
+    src/logger.hpp \
+    src/plugin.hpp
 
 SOURCES += src/main.cpp \
     src/daemon.cpp \
@@ -48,7 +49,8 @@ SOURCES += src/main.cpp \
     src/settingsmanager.cpp \
     src/controller.cpp \
     src/clientresponse.cpp \
-    src/logger.cpp
+    src/logger.cpp \
+    src/plugin.cpp
 
 CONFIG(release, debug|release) {
     DESTDIR = release
