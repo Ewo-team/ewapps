@@ -9,16 +9,17 @@ class SettingsManager : public QObject{
         Q_OBJECT
 
     protected:
-        static Logger *LOG;
+        Logger *LOG;
 
         QString directory;
         QStringList apps;
     public:
-        SettingsManager();
+        SettingsManager(Logger *LOG);
         ~SettingsManager();
 
     public:
         QString getDirectory();
+        QStringList getApps();
 
     protected:
         void loadConfig();

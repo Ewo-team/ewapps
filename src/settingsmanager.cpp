@@ -1,11 +1,10 @@
 #include "settingsmanager.hpp"
-#include <iostream>
 #include <QFile>
 #include <QTextStream>
 
-Logger* SettingsManager::LOG = new Logger(QString(LOG_DIR)+QString(LOG_FILE), LOG_LVL);
 
-SettingsManager::SettingsManager(){
+SettingsManager::SettingsManager(Logger *LOG){
+    this->LOG = LOG;
     this->loadConfig();
 }
 
@@ -34,8 +33,9 @@ void  SettingsManager::loadConfig(){
     QTextStream in(&configFile);
     bool first = true;
     while (!in.atEnd()) {
-        QString line = in.readLine();
-        if(line.trimmed().at(0) != QChar('#')){
+        QString line = in.readLine().trimmed();
+        LOG->debug(line);
+        if(line.size() >0 && line.at(0) != QChar('#')){
             if(first){
                 first = true;
                 LOG->info(tr("Applications : "));
@@ -73,4 +73,8 @@ void  SettingsManager::getConfigFileLocation(){
             return;
         }
     }
+}
+
+QStringList SettingsManager::getApps(){
+    return this->apps;
 }

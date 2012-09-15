@@ -40,7 +40,7 @@ void LocalSocketIpcClient::socket_connected(){
 }
 
 void LocalSocketIpcClient::socket_disconnected() {
-    qDebug() << "socket_disconnected";
+
 }
 
 
@@ -55,6 +55,6 @@ void LocalSocketIpcClient::socket_readReady() {
     emit serverResponse(message);
 }
 
-void LocalSocketIpcClient::socket_error(QLocalSocket::LocalSocketError) {
-    qDebug() << "socket_error";
+void LocalSocketIpcClient::socket_error(QLocalSocket::LocalSocketError error) {
+    qDebug() << "socket_error : " << error;
 }

@@ -20,7 +20,7 @@ DEFINES += START=\\\"start\\\" \
         RESTART=\\\"restart\\\" \
         RELOAD=\\\"reload\\\" \
         STATE=\\\"state\\\" \
-        DAEMON_NAME=\\\"esapps\\\" \
+        DAEMON_NAME=\\\"ewapps\\\" \
         \
         DAEMON=0\
         CONTROLLER=1\

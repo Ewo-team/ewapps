@@ -10,11 +10,12 @@ LocalSocketIpcServer::LocalSocketIpcServer(QString servername, QObject *parent)
     }
 
     connect(m_server, SIGNAL(newConnection()), this, SLOT(socket_new_connection()));
-    std::cout << "server started" << std::endl;
+
 }
 
 LocalSocketIpcServer::~LocalSocketIpcServer() {
-
+    this->m_server->close();
+    delete this->m_server;
 }
 
 

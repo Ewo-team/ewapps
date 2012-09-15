@@ -16,6 +16,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include "daemon.hpp"
+#include "controller.hpp"
 #include "logger.hpp"
 
 bool daemonIsRunning();
@@ -32,21 +33,22 @@ void freeLockFile();
  */
 int main(int argc, char *argv[]){
     Logger *LOG = new Logger(QString(LOG_DIR)+QString(LOG_FILE), LOG_LVL);
-    /*Daemon app(argc, argv, settings);
-    return app.run();*/
-    SettingsManager *settings = new SettingsManager();
-    std::cout << settings->getDirectory().toStdString() << std::endl;
+
+    SettingsManager *settings = new SettingsManager(LOG);
+
     if(!daemonIsRunning()){
             std::cout << QObject::tr("Daemon started").toStdString() << std::endl;
             daemonize(settings->getDirectory(), LOG);
-            Daemon *daemon = new Daemon(argc, argv, settings);
+            Daemon *daemon = new Daemon(argc, argv, settings, LOG);
 
             int result = daemon->run();
             freeLockFile();
+            delete daemon;
             return result;
     }
     else{
-       std::cout << "controller" << std::endl;
+            Controller *controller = new Controller(argc, argv);
+            return controller->run();
     }
     return EXIT_SUCCESS;
 }
@@ -91,12 +93,15 @@ void daemonize(QString directory, Logger *LOG){
     lockFile.close();
 
     signal(SIGTERM,signal_handler); //Gestion du SIGTERM
+    signal(SIGKILL,signal_handler); //Gestion du SIGTERM
 }
 
 void signal_handler(int sig){
     switch(sig) {
         case SIGTERM:
+        case SIGKILL:
             freeLockFile();
+            exit(EXIT_SUCCESS);
         break;
     }
 }

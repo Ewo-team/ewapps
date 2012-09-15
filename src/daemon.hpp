@@ -12,6 +12,7 @@
 #include <QStringList>
 #include "settingsmanager.hpp"
 #include "localsocketipcserver.hpp"
+#include "logger.hpp"
 
 /*!
  * @brief classe principale
@@ -21,6 +22,7 @@ class Daemon : public QCoreApplication{
         Q_OBJECT
 
     protected:
+        Logger *LOG;
         QStringList     args;
         SettingsManager *settings;
         LocalSocketIpcServer *server;
@@ -36,8 +38,9 @@ class Daemon : public QCoreApplication{
          *
          * @param argc
          * @param argv
+         * @param LOG : logger
          */
-        explicit Daemon(int & argc, char ** argv, SettingsManager *settings);
+        explicit Daemon(int & argc, char ** argv, SettingsManager *settings, Logger *LOG);
 
 
         /*!

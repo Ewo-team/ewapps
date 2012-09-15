@@ -6,12 +6,12 @@
  */
 
 #include "daemon.hpp"
-#include <iostream>
 #include <QtCore/QDebug>
 #include <QObject>
 
-Daemon::Daemon(int & argc, char ** argv,  SettingsManager *settings) :QCoreApplication(argc, argv){
+Daemon::Daemon(int & argc, char ** argv,  SettingsManager *settings, Logger *LOG) :QCoreApplication(argc, argv){
     this->settings = settings;
+    this->LOG = LOG;
     this->server   = new LocalSocketIpcServer(QString(DAEMON_NAME), this);
     this->isRunning = true;
 
@@ -19,12 +19,13 @@ Daemon::Daemon(int & argc, char ** argv,  SettingsManager *settings) :QCoreAppli
 }
 
 Daemon::~Daemon(){
-    std::cout << "ewapp killed" << std::endl;
+    delete this->server;
+    LOG->info(tr("ewapp killed"));
 }
 
 
 int Daemon::run(){
-    std::cout << QObject::tr("ewapp launched").toStdString() << std::endl;
+    LOG->info(tr("ewapp launched"));
     return this->exec();
 }
 QString Daemon::handleNewArgs(){
@@ -37,7 +38,6 @@ QString Daemon::handleNewArgs(){
     //Autres arguments
     QStringList otherArgs(this->args);
     otherArgs.removeAt(0);
-
     if(action == START)
         return this->handleStart(otherArgs);
     if(action == STOP)
@@ -63,28 +63,67 @@ bool Daemon::checkArgs(){
 }
 
 QString Daemon::handleStart(QStringList appsList){
-    return QObject::tr("ewapp start\n");
+    QString result = tr("ewapp start\n");
+    QStringList apps = this->settings->getApps();
+    foreach(QString app,appsList){
+        if(apps.contains(app)){
+            result += app;
+        }
+    }
+    return result;
 }
 
 
 QString Daemon::handleStop(QStringList appsList){
-    this->isRunning = false;
-    return QObject::tr("ewapp stop\n");
+    QString result = tr("ewapp stop\n");
+    if(appsList.isEmpty())
+        this->isRunning = false;
+    else{
+        QStringList apps = this->settings->getApps();
+        foreach(QString app,appsList){
+            if(apps.contains(app)){
+                result += app;
+            }
+        }
+    }
+    return result;
 }
 
 QString Daemon::handleRestart(QStringList appsList){
-    return QObject::tr("ewapp restart\n");
+    QString result = tr("ewapp restart\n");
+    QStringList apps = this->settings->getApps();
+    foreach(QString app,appsList){
+        if(apps.contains(app)){
+            result += app;
+        }
+    }
+    return result;
 }
 
 QString Daemon::handleReload(QStringList appsList){
-    return QObject::tr("ewapp reload\n");
+    QString result = tr("ewapp reload\n");
+    QStringList apps = this->settings->getApps();
+    foreach(QString app,appsList){
+        if(apps.contains(app)){
+            result += app;
+        }
+    }
+    return result;
 }
 
 QString Daemon::handleState(QStringList appsList){
-    return QObject::tr("ewapp state\n");
+    QString result = tr("ewapp state\n");
+    QStringList apps = this->settings->getApps();
+    foreach(QString app,appsList){
+        if(apps.contains(app)){
+            result += app;
+        }
+    }
+    return result;
 }
 
 void Daemon::handleCommand(ClientResponse *response){
+    LOG->info(tr("New message")+response->getMessage());
     this->args = response->getMessage().split(",", QString::SkipEmptyParts);
     response->sendResponse(this->handleNewArgs());
 
@@ -94,14 +133,14 @@ void Daemon::handleCommand(ClientResponse *response){
 }
 
 QString Daemon::displayUsage(){
-    return QObject::tr("usage : ewo-app [action] [params]\n")
-            + QObject::tr("  action :\n")
-            + QObject::tr("    start  : start the daemon\n")
-            + QObject::tr("    stop   : stop the daemon\n")
-            + QObject::tr("    reload : reload applications\n")
-            + QObject::tr("    state  : give state of applications on the daemon\n")
-            + QObject::tr("      option --json send result in json format\n")
-            + QObject::tr("  params : list of applications\n")
-            + QObject::tr("           if there is no param all applications are impacted by the action\n");
+    return tr("usage : ewo-app [action] [params]\n")
+            + tr("  action :\n")
+            + tr("    start  : start the daemon\n")
+            + tr("    stop   : stop the daemon\n")
+            + tr("    reload : reload applications\n")
+            + tr("    state  : give state of applications on the daemon\n")
+            + tr("      option --json send result in json format\n")
+            + tr("  params : list of applications\n")
+            + tr("           if there is no param all applications are impacted by the action\n");
 }
 
