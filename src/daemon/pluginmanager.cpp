@@ -16,36 +16,8 @@
 //
 //////////////////////////////////////////////////////////////////////////
 
-#ifndef WSCLIENT_HPP
-#define WSCLIENT_HPP
+#include "pluginmanager.hpp"
 
-#include <QObject>
-#include <QUuid>
-#include <QtScript>
-
-/**
- * \namespace plugin
- */
-namespace plugin{
-
-    class Plugin;
-
-    /*!
-     * @brief Client WebSocket
-     */
-    class WsClient: public QObject{
-        Q_OBJECT
-
-        private:
-            QUuid uuid;
-            Plugin *plugin;
-        public:
-            WsClient(QUuid uuid, Plugin *plugin);
-            void sendMessage(QString message);
-            void sendMessage(QScriptValue message);
-        signals:
-            QString newMessage();
-            void close();
-    };
+PluginManager::PluginManager()
+{
 }
-#endif // WSCLIENT_HPP

@@ -20,6 +20,8 @@
 #define COMMANDARGUMENTHANDLER_HPP
 
 #include <QObject>
+#include <QStringList>
+#include "../utils/settingsmanager.hpp"
 
 namespace dns{
 
@@ -30,10 +32,21 @@ namespace dns{
 
         private:
             Daemon *_daemon;
+            SettingsManager *settings;
+            QStringList     args;
         public:
-            explicit CommandArgumentHandler(Daemon *parent = 0);
+            explicit CommandArgumentHandler(Daemon *parent, SettingsManager *settings);
+
+            /*!
+             * @brief fonction appelée si le daemon est déjà lancé
+             *
+             * @param args arugments à parser
+             * @return int
+             */
+            QString handleNewArgs(QStringList args);
 
         protected:
+
             /**
              * @brief vérifie si les arguments sont valides
              *

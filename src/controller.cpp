@@ -17,7 +17,7 @@
 //////////////////////////////////////////////////////////////////////////
 
 #include "controller.hpp"
-#include "localsocketipcclient.hpp"
+#include "localSocket/localsocketipcclient.hpp"
 #include <iostream>
 
 Controller::Controller(int &argc, char **argv, SettingsManager *settings) : QCoreApplication(argc, argv){

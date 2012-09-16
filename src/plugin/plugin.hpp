@@ -23,8 +23,9 @@
 #include <QtPlugin>
 #include <QMap>
 #include <QUuid>
-#include <QtScript/QScriptValue>
+#include <QtScript>
 #include "wsclient.hpp"
+#include "../localSocket/localsocketipcclient.hpp"
 
 
 /**
@@ -37,7 +38,7 @@ namespace plugin{
     class Plugin : public QObject{
         Q_OBJECT
 
-            friend WsClient::sendMessage(QString message);
+        friend void WsClient::sendMessage(QString);
 
         private:
             LocalSocketIpcClient *_localSocketIpClient;
@@ -45,7 +46,7 @@ namespace plugin{
 
         public:
             explicit Plugin(QObject *parent = 0);
-            virtual QString getPluginName();
+            virtual QString getPluginName() = 0;
 
         protected:
             void sendMessage(QScriptValue message);

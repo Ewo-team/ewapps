@@ -29,9 +29,9 @@
 
 #include <QCoreApplication>
 #include <QStringList>
-#include "../settingsmanager.hpp"
+#include "../utils/settingsmanager.hpp"
+#include "../utils/logger.hpp"
 #include "../localSocket/localsocketipcserver.hpp"
-#include "../logger.hpp"
 #include "commandargumenthandler.hpp"
 
 
@@ -47,7 +47,6 @@ namespace dns{
 
         protected:
             Logger *LOG;
-            QStringList     args;
             SettingsManager *settings;
             CommandArgumentHandler *commandArgumentHandler;
             LocalSocketIpcServer *server;
@@ -80,13 +79,6 @@ namespace dns{
             int run();
 
         protected:
-
-            /*!
-             * @brief fonction appelée si le daemon est déjà lancé
-             *
-             * @return int
-             */
-            QString handleNewArgs();
 
             /*!
              * @brief Arrête le daemon

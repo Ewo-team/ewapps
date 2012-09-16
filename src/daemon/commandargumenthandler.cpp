@@ -17,11 +17,49 @@
 //////////////////////////////////////////////////////////////////////////
 
 #include "commandargumenthandler.hpp"
+#include "daemon.hpp"
 
 using namespace dns;
 
-CommandArgumentHandler::CommandArgumentHandler(Daemon *daemon) :QObject(daemon){
-    this->_daemon = daemon;
+CommandArgumentHandler::CommandArgumentHandler(Daemon *parent, SettingsManager *settings) :QObject(parent){
+    this->_daemon = parent;
+    this->settings = settings;
+}
+
+QString CommandArgumentHandler::handleNewArgs(QStringList args){
+    this->args = args;
+
+    //Pas d'argument => action par defaut : start
+    if(this->args.size() == 0 )
+        return this->handleStart(QStringList());
+
+    //selection de l'action
+    QString action(this->args.at(0));
+    //Autres arguments
+    QStringList otherArgs(this->args);
+    otherArgs.removeAt(0);
+    if(action == START)
+        return this->handleStart(otherArgs);
+    if(action == STOP)
+        return this->handleStop(otherArgs);
+    if(action == RESTART)
+        return this->handleRestart(otherArgs);
+    if(action == RELOAD)
+        return this->handleReload(otherArgs);
+    if(action == STATE)
+        return this->handleState(otherArgs);
+    return  this->displayUsage();
+}
+
+bool CommandArgumentHandler::checkArgs(){
+    if(this->args.size() == 0 )
+        return false;
+    QString action(this->args.at(0));
+    return action == START      ||
+            action == STOP       ||
+            action == RESTART    ||
+            action == RELOAD     ||
+            action == STATE;
 }
 
 QString CommandArgumentHandler::handleStart(QStringList appsList){
@@ -89,10 +127,10 @@ QString CommandArgumentHandler::handleState(QStringList appsList){
 QString CommandArgumentHandler::displayUsage(){
     return tr("usage : ewo-app [action] [params]\n")
             + tr("  action :\n")
-            + tr("    start  : start the daemon\n")
-            + tr("    stop   : stop the daemon\n")
+            + tr("    start  : start the CommandArgumentHandler\n")
+            + tr("    stop   : stop the CommandArgumentHandler\n")
             + tr("    reload : reload applications\n")
-            + tr("    state  : give state of applications on the daemon\n")
+            + tr("    state  : give state of applications on the CommandArgumentHandler\n")
             + tr("      option --json send result in json format\n")
             + tr("  params : list of applications\n")
             + tr("           if there is no param all applications are impacted by the action\n");

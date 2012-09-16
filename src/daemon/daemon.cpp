@@ -26,7 +26,7 @@
 #include "daemon.hpp"
 #include <QtCore/QDebug>
 #include <QObject>
-#include <websocketpp/websocketpp.hpp>
+//#include <websocketpp/websocketpp.hpp>
 
 using namespace dns;
 
@@ -34,7 +34,7 @@ Daemon::Daemon(int & argc, char ** argv,  SettingsManager *settings, Logger *LOG
     this->settings = settings;
     this->LOG = LOG;
     this->server   = new LocalSocketIpcServer(settings->getDaemonName(), this);
-    this->commandArgumentHandler = new CommandArgumentHandler(this);
+    this->commandArgumentHandler = new CommandArgumentHandler(this, settings);
     this->isRunning = true;
 
     connect(this->server, SIGNAL(messageReceived(ClientResponse*)), this, SLOT(handleCommand(ClientResponse*)));
@@ -50,51 +50,26 @@ int Daemon::run(){
     LOG->info(tr("ewapp launched"));
     return this->exec();
 }
-QString Daemon::handleNewArgs(){
-    //Pas d'argument => action par defaut : start
-    if(this->args.size() == 0 )
-        return this->handleStart(QStringList());
 
-    //selection de l'action
-    QString action(this->args.at(0));
-    //Autres arguments
-    QStringList otherArgs(this->args);
-    otherArgs.removeAt(0);
-    if(action == START)
-        return this->handleStart(otherArgs);
-    if(action == STOP)
-        return this->handleStop(otherArgs);
-    if(action == RESTART)
-        return this->handleRestart(otherArgs);
-    if(action == RELOAD)
-        return this->handleReload(otherArgs);
-    if(action == STATE)
-        return this->handleState(otherArgs);
-    return  this->displayUsage();
-}
 
 void Daemon::stop(){
     this->isRunning = false;
 }
 
-bool Daemon::checkArgs(){
-    if(this->args.size() == 0 )
-        return false;
-    QString action(this->args.at(0));
-    return action == START      ||
-            action == STOP       ||
-            action == RESTART    ||
-            action == RELOAD     ||
-            action == STATE;
-}
-
-
 
 void Daemon::handleCommand(ClientResponse *response){
     LOG->info(tr("New message")+response->getMessage());
-    this->args = response->getMessage().split(",", QString::SkipEmptyParts);
-    response->sendResponse(this->handleNewArgs());
+    QString message = response->getMessage();
+    if(message == null || message.size() == 0)
+        return;
+    //Message Json => à envoyer à la bonne appli
+    if(message.at(0) == "[" || message.at(0) == "{"){
 
+    }
+    else{
+        QStringList args = message.split(",", QString::SkipEmptyParts);
+        response->sendResponse(this->commandArgumentHandler->handleNewArgs(args));
+    }
     if(!this->isRunning){
         this->quit();
     }

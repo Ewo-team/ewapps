@@ -26,7 +26,6 @@
 #include <QSettings>
 #include <QFile>
 #include <iostream>
-#include "settingsmanager.hpp"
 #include <stdio.h>
 #include <fcntl.h>
 #include <signal.h>
@@ -34,8 +33,9 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include "daemon/daemon.hpp"
+#include "utils/settingsmanager.hpp"
+#include "utils/logger.hpp"
 #include "controller.hpp"
-#include "logger.hpp"
 
 
 bool daemonIsRunning();

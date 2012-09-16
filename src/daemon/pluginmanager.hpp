@@ -16,36 +16,16 @@
 //
 //////////////////////////////////////////////////////////////////////////
 
-#ifndef WSCLIENT_HPP
-#define WSCLIENT_HPP
+#ifndef PLUGINMANAGER_HPP
+#define PLUGINMANAGER_HPP
 
-#include <QObject>
-#include <QUuid>
-#include <QtScript>
+namespace dns{
 
-/**
- * \namespace plugin
- */
-namespace plugin{
+    class PluginManager{
 
-    class Plugin;
-
-    /*!
-     * @brief Client WebSocket
-     */
-    class WsClient: public QObject{
-        Q_OBJECT
-
-        private:
-            QUuid uuid;
-            Plugin *plugin;
         public:
-            WsClient(QUuid uuid, Plugin *plugin);
-            void sendMessage(QString message);
-            void sendMessage(QScriptValue message);
-        signals:
-            QString newMessage();
-            void close();
+            PluginManager();
     };
 }
-#endif // WSCLIENT_HPP
+
+#endif // PLUGINMANAGER_HPP

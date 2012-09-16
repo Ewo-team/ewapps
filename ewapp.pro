@@ -6,7 +6,7 @@
 
 TEMPLATE = app
 
-QT       += core network
+QT       += core network script
 QT       -= gui
 
 TARGET   = ewapp
@@ -36,11 +36,12 @@ HEADERS += src/daemon/daemon.hpp \
     src/localSocket/localsocketipcserver.hpp \
     src/localSocket/localsocketipcclient.hpp \
     src/localSocket/clientresponse.hpp \
-    src/settingsmanager.hpp \
+    src/utils/settingsmanager.hpp \
+    src/utils/logger.hpp \
     src/controller.hpp \
-    src/logger.hpp \
     src/plugin/plugin.hpp \
-    src/plugin/wsclient.hpp
+    src/plugin/wsclient.hpp \
+    src/daemon/pluginmanager.hpp
 
 SOURCES += src/main.cpp \
     src/daemon/daemon.cpp \
@@ -48,11 +49,12 @@ SOURCES += src/main.cpp \
     src/localSocket/localsocketipcserver.cpp \
     src/localSocket/localsocketipcclient.cpp \
     src/localSocket/clientresponse.cpp \
-    src/settingsmanager.cpp \
+    src/utils/settingsmanager.cpp \
+    src/utils/logger.cpp \
     src/controller.cpp \
-    src/logger.cpp \
     src/plugin/plugin.cpp \
-    src/plugin/wsclient.cpp
+    src/plugin/wsclient.cpp \
+    src/daemon/pluginmanager.cpp
 
 CONFIG(release, debug|release) {
     DESTDIR = release
@@ -61,7 +63,7 @@ CONFIG(release, debug|release) {
     RCC_DIR = release/.rcc
     UI_DIR = release/.ui
     DEFINES += LOG_LVL=INFO
-    LIBS += -llibwebsocketpp
+    LIBS += -Bdynamic -lwebsocketpp
 }
 CONFIG(debug, debug|release) {
     DESTDIR = debug
@@ -70,6 +72,6 @@ CONFIG(debug, debug|release) {
     RCC_DIR = debug/.rcc
     UI_DIR = debug/.ui
     DEFINES += LOG_LVL=DEBUG
-    LIBS += -llibwebsocketpp-d
-    QMAKE_CXXFLAGS += -Wall
+    LIBS += -lwebsocketpp-d
+    QMAKE_CXXFLAGS += -Bdynamic -Wall
 }

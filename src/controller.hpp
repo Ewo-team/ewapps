@@ -23,7 +23,7 @@
 #include <QObject>
 #include <QCoreApplication>
 #include <QStringList>
-#include "settingsmanager.hpp"
+#include "utils/settingsmanager.hpp"
 
 /*!
  * @brief controle du daemon
