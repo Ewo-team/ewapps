@@ -31,23 +31,25 @@ DEFINES += START=\\\"start\\\" \
 
 
 
-HEADERS += src/daemon.hpp \
-    src/localsocketipcserver.hpp \
-    src/localsocketipcclient.hpp \
+HEADERS += src/daemon/daemon.hpp \
+    src/daemon/commandargumenthandler.hpp \
+    src/localSocket/localsocketipcserver.hpp \
+    src/localSocket/localsocketipcclient.hpp \
+    src/localSocket/clientresponse.hpp \
     src/settingsmanager.hpp \
     src/controller.hpp \
-    src/clientresponse.hpp \
     src/logger.hpp \
     src/plugin/plugin.hpp \
     src/plugin/wsclient.hpp
 
 SOURCES += src/main.cpp \
-    src/daemon.cpp \
-    src/localsocketipcserver.cpp \
-    src/localsocketipcclient.cpp \
+    src/daemon/daemon.cpp \
+    src/daemon/commandargumenthandler.cpp \
+    src/localSocket/localsocketipcserver.cpp \
+    src/localSocket/localsocketipcclient.cpp \
+    src/localSocket/clientresponse.cpp \
     src/settingsmanager.cpp \
     src/controller.cpp \
-    src/clientresponse.cpp \
     src/logger.cpp \
     src/plugin/plugin.cpp \
     src/plugin/wsclient.cpp
@@ -59,6 +61,7 @@ CONFIG(release, debug|release) {
     RCC_DIR = release/.rcc
     UI_DIR = release/.ui
     DEFINES += LOG_LVL=INFO
+    LIBS += -llibwebsocketpp
 }
 CONFIG(debug, debug|release) {
     DESTDIR = debug
@@ -67,5 +70,6 @@ CONFIG(debug, debug|release) {
     RCC_DIR = debug/.rcc
     UI_DIR = debug/.ui
     DEFINES += LOG_LVL=DEBUG
+    LIBS += -llibwebsocketpp-d
     QMAKE_CXXFLAGS += -Wall
 }
