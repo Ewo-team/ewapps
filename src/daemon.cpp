@@ -12,7 +12,7 @@
 Daemon::Daemon(int & argc, char ** argv,  SettingsManager *settings, Logger *LOG) :QCoreApplication(argc, argv){
     this->settings = settings;
     this->LOG = LOG;
-    this->server   = new LocalSocketIpcServer(QString(DAEMON_NAME), this);
+    this->server   = new LocalSocketIpcServer(settings->getDaemonName(), this);
     this->isRunning = true;
 
     connect(this->server, SIGNAL(messageReceived(ClientResponse*)), this, SLOT(handleCommand(ClientResponse*)));

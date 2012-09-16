@@ -20,14 +20,12 @@ DEFINES += START=\\\"start\\\" \
         RESTART=\\\"restart\\\" \
         RELOAD=\\\"reload\\\" \
         STATE=\\\"state\\\" \
-        DAEMON_NAME=\\\"ewapps\\\" \
         \
         DAEMON=0\
         CONTROLLER=1\
         \
         RUNNING_DIR=\\\"/usr/local/ewapp/\\\"\
         \
-        LOCK_FILE=\\\"/var/lock/ewapp.lock\\\"\
         LOG_DIR=\\\"/var/log/ewapp/\\\"\
         LOG_FILE=\\\"ewapp.log\\\"
 

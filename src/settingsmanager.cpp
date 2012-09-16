@@ -75,3 +75,12 @@ QStringList SettingsManager::getAppsNames(){
     }
     return result;
 }
+
+QString SettingsManager::getLockFile(){
+    return this->settings->value("lockFile").toString();
+}
+
+
+QString SettingsManager::getDaemonName(){
+    return this->settings->value("daemonName").toString();
+}

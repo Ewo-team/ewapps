@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QCoreApplication>
 #include <QStringList>
+#include "settingsmanager.hpp"
 
 /*!
  * @brief controle du daemon
@@ -13,10 +14,11 @@ class Controller : public QCoreApplication{
         Q_OBJECT
 
     protected:
-            QStringList args;
+        QStringList args;
+        SettingsManager *settings;
 
     public:
-        explicit Controller(int &argc, char **argv);
+        explicit Controller(int &argc, char **argv, SettingsManager *settings);
 
         
     signals:

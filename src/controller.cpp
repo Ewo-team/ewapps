@@ -2,8 +2,8 @@
 #include "localsocketipcclient.hpp"
 #include <iostream>
 
-Controller::Controller(int &argc, char **argv) : QCoreApplication(argc, argv){
-
+Controller::Controller(int &argc, char **argv, SettingsManager *settings) : QCoreApplication(argc, argv){
+    this->settings = settings;
     //On commence à 1 pour ne pas s'embêter avec le nom de l'appli
    for(int i = 1; i < argc; ++i){
        this->args.append(argv[i]);
@@ -12,7 +12,7 @@ Controller::Controller(int &argc, char **argv) : QCoreApplication(argc, argv){
 }
 
 int Controller::run(){
-    LocalSocketIpcClient client(QString(DAEMON_NAME),this);
+    LocalSocketIpcClient client(QString(this->settings->getDaemonName()),this);
 
 
     connect(&client, SIGNAL(serverResponse(QString)), this, SLOT(displayResponse(QString)));

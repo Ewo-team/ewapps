@@ -38,7 +38,8 @@ class Daemon : public QCoreApplication{
          *
          * @param argc
          * @param argv
-         * @param LOG : logger
+         * @param settings settings manager
+         * @param LOG logger
          */
         explicit Daemon(int & argc, char ** argv, SettingsManager *settings, Logger *LOG);
 

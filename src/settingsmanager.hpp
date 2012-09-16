@@ -25,6 +25,8 @@ class SettingsManager : public QObject{
         QString getDirectory();
         QStringList getApps();
         QStringList getAppsNames();
+        QString getLockFile();
+        QString getDaemonName();
 
     protected:
         void loadConfig();

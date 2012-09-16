@@ -20,9 +20,11 @@
 #include "logger.hpp"
 
 bool daemonIsRunning();
-void daemonize(QString directory, Logger *LOG );
+void daemonize(QString directory,Logger *LOG );
 void signal_handler(int sig);
 void freeLockFile();
+
+QString lockFilePath;
 
 /*!
  * @brief fonction main
@@ -35,7 +37,7 @@ int main(int argc, char *argv[]){
     Logger *LOG = new Logger(QString(LOG_DIR)+QString(LOG_FILE), LOG_LVL);
 
     SettingsManager *settings = new SettingsManager(LOG);
-
+    lockFilePath = settings->getLockFile();
     if(!daemonIsRunning()){
             std::cout << QObject::tr("Daemon started").toStdString() << std::endl;
             daemonize(settings->getDirectory(), LOG);
@@ -47,14 +49,14 @@ int main(int argc, char *argv[]){
             return result;
     }
     else{
-            Controller *controller = new Controller(argc, argv);
+            Controller *controller = new Controller(argc, argv, settings);
             return controller->run();
     }
     return EXIT_SUCCESS;
 }
 
 bool daemonIsRunning(){
-    QFile lockFile(LOCK_FILE);
+    QFile lockFile(lockFilePath);
     return lockFile.exists();
 }
 
@@ -84,10 +86,10 @@ void daemonize(QString directory, Logger *LOG){
 
     chdir(directory.toStdString().c_str()); //Changement de repertoire d'execution
     sprintf(str,"%d\n",getpid());
-    QFile lockFile(LOCK_FILE);
+    QFile lockFile(lockFilePath);
     lockFile.open(QIODevice::ReadWrite);
     if (lockFile.write(str)<0){
-        LOG->error(QObject::tr("Error while opening lock file : ")+QString(LOCK_FILE));
+        LOG->error(QObject::tr("Error while opening lock file : ")+QString(lockFilePath));
         exit(EXIT_FAILURE);
     }
     lockFile.close();
@@ -107,7 +109,7 @@ void signal_handler(int sig){
 }
 
 void freeLockFile(){
-    QFile lockFile(LOCK_FILE);
+    QFile lockFile(lockFilePath);
     lockFile.open(QIODevice::ReadWrite);
     lockFile.remove();
 }
