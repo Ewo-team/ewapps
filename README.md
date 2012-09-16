@@ -39,7 +39,7 @@ $ ewapp state [appname1] [appname2] [...]
 
 La configuration elle se fait via fichier INI. Ce fichier s'appel ewapp.ini et doit se trouver dans /etc/ ou usr/local/etc/ oudans la PATH du système, et peut se trouver dans un sous dossier ewapp (ou pas).
 Sa structure est très simple
-```bash
+```ini
 [General]
 ; Fichier de lock
 lockFile=/var/lock/ewapp.lock
