@@ -42,9 +42,9 @@ Sa structure est très simple
 ```bash
 #Un commentaire
 #chemin relatif au fichier de config
-ewia
+ewia.so
 #chemin absolu
-/usr/local/etc/ewapp/ewevent
+/usr/local/etc/ewapp/ewevent.so
 ```
 
 Creation d'un plugin

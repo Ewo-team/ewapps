@@ -64,7 +64,7 @@ bool Daemon::checkArgs(){
 
 QString Daemon::handleStart(QStringList appsList){
     QString result = tr("ewapp start\n");
-    QStringList apps = this->settings->getApps();
+    QStringList apps = this->settings->getAppsNames();
     foreach(QString app,appsList){
         if(apps.contains(app)){
             result += app;
@@ -79,7 +79,7 @@ QString Daemon::handleStop(QStringList appsList){
     if(appsList.isEmpty())
         this->isRunning = false;
     else{
-        QStringList apps = this->settings->getApps();
+        QStringList apps = this->settings->getAppsNames();
         foreach(QString app,appsList){
             if(apps.contains(app)){
                 result += app;
@@ -91,7 +91,7 @@ QString Daemon::handleStop(QStringList appsList){
 
 QString Daemon::handleRestart(QStringList appsList){
     QString result = tr("ewapp restart\n");
-    QStringList apps = this->settings->getApps();
+    QStringList apps = this->settings->getAppsNames();
     foreach(QString app,appsList){
         if(apps.contains(app)){
             result += app;
@@ -102,7 +102,7 @@ QString Daemon::handleRestart(QStringList appsList){
 
 QString Daemon::handleReload(QStringList appsList){
     QString result = tr("ewapp reload\n");
-    QStringList apps = this->settings->getApps();
+    QStringList apps = this->settings->getAppsNames();
     foreach(QString app,appsList){
         if(apps.contains(app)){
             result += app;
@@ -113,7 +113,7 @@ QString Daemon::handleReload(QStringList appsList){
 
 QString Daemon::handleState(QStringList appsList){
     QString result = tr("ewapp state\n");
-    QStringList apps = this->settings->getApps();
+    QStringList apps = this->settings->getAppsNames();
     foreach(QString app,appsList){
         if(apps.contains(app)){
             result += app;

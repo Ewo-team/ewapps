@@ -1,6 +1,7 @@
 #include "settingsmanager.hpp"
 #include <QFile>
 #include <QTextStream>
+#include <iostream>
 
 
 SettingsManager::SettingsManager(Logger *LOG){
@@ -23,27 +24,11 @@ void  SettingsManager::loadConfig(){
         LOG->error(tr("No config file"));
         return;
     }
-    QString filePath = this->directory+"ewapp.conf";
-    QFile configFile(filePath);
-    if (!configFile.open(QIODevice::ReadOnly | QIODevice::Text)){
-        LOG->error(tr("Cannot open configuration file : ") + filePath);
-        return;
-    }
+    QString filePath = this->directory+"ewapp.ini";
 
-    QTextStream in(&configFile);
-    bool first = true;
-    while (!in.atEnd()) {
-        QString line = in.readLine().trimmed();
-        LOG->debug(line);
-        if(line.size() >0 && line.at(0) != QChar('#')){
-            if(first){
-                first = true;
-                LOG->info(tr("Applications : "));
-            }
-            LOG->info(" "+line);
-            this->apps.push_back(line);
-        }
-     }
+    this->settings = new QSettings(filePath, QSettings::IniFormat);
+
+    this->apps = this->settings->value("apps/list").toStringList();
 }
 
 
@@ -77,4 +62,16 @@ void  SettingsManager::getConfigFileLocation(){
 
 QStringList SettingsManager::getApps(){
     return this->apps;
+}
+
+QStringList SettingsManager::getAppsNames(){
+    QStringList result;
+    foreach(QString appPath, this->apps){
+        //Get file name : "/etc/name.so" => name.so
+        QStringList tbl = appPath.split("/", QString::SkipEmptyParts);
+        QString app = tbl[tbl.size() - 1];
+        //Get the name "name.so" => name
+        result.push_back(app.split('.', QString::SkipEmptyParts).at(0));
+    }
+    return result;
 }

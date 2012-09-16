@@ -1,7 +1,7 @@
 #ifndef SETTINGSMANAGER_HPP
 #define SETTINGSMANAGER_HPP
 
-#include <QObject>
+#include <QSettings>
 #include <QStringList>
 #include "logger.hpp"
 /*!
@@ -13,6 +13,7 @@ class SettingsManager : public QObject{
 
     protected:
         Logger *LOG;
+        QSettings *settings;
 
         QString directory;
         QStringList apps;
@@ -23,6 +24,7 @@ class SettingsManager : public QObject{
     public:
         QString getDirectory();
         QStringList getApps();
+        QStringList getAppsNames();
 
     protected:
         void loadConfig();
