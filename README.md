@@ -1,7 +1,7 @@
 ewapps
 ======
 
-version : 0.0.4
+version : 0.0.5
 
 Plateforme pour faire tourner les applications lourdes d'ewo. Elle lance un daemon qui lui même va gérer les cibles de vie des autes applications (IA, gestion d'evenments aléatoires, ...)
 
