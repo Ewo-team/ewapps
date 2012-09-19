@@ -30,6 +30,7 @@ DEFINES += START=\\\"start\\\" \
         LOG_FILE=\\\"ewapp.log\\\"
 
 
+LIBS += -lsegvcatch -Bdynamic -lwebsocketpp
 
 HEADERS += src/daemon/daemon.hpp \
     src/daemon/commandargumenthandler.hpp \
@@ -38,10 +39,10 @@ HEADERS += src/daemon/daemon.hpp \
     src/localSocket/clientresponse.hpp \
     src/utils/settingsmanager.hpp \
     src/utils/logger.hpp \
+    src/utils/daemonize.hpp \
     src/controller.hpp \
     src/plugin/plugin.hpp \
-    src/plugin/wsclient.hpp \
-    src/daemon/pluginmanager.hpp
+    src/plugin/wsclient.hpp
 
 SOURCES += src/main.cpp \
     src/daemon/daemon.cpp \
@@ -51,10 +52,10 @@ SOURCES += src/main.cpp \
     src/localSocket/clientresponse.cpp \
     src/utils/settingsmanager.cpp \
     src/utils/logger.cpp \
+    src/utils/daemonize.cpp \
     src/controller.cpp \
     src/plugin/plugin.cpp \
-    src/plugin/wsclient.cpp \
-    src/daemon/pluginmanager.cpp
+    src/plugin/wsclient.cpp
 
 CONFIG(release, debug|release) {
     DESTDIR = release
@@ -63,7 +64,6 @@ CONFIG(release, debug|release) {
     RCC_DIR = release/.rcc
     UI_DIR = release/.ui
     DEFINES += LOG_LVL=INFO
-    LIBS += -Bdynamic -lwebsocketpp
 }
 CONFIG(debug, debug|release) {
     DESTDIR = debug
@@ -72,6 +72,5 @@ CONFIG(debug, debug|release) {
     RCC_DIR = debug/.rcc
     UI_DIR = debug/.ui
     DEFINES += LOG_LVL=DEBUG
-    LIBS += -lwebsocketpp-d
     QMAKE_CXXFLAGS += -Bdynamic -Wall
 }

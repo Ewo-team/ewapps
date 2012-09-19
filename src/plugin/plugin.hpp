@@ -19,7 +19,7 @@
 #ifndef PLUGIN_HPP
 #define PLUGIN_HPP
 
-#include <QObject>
+#include <QThread>
 #include <QtPlugin>
 #include <QMap>
 #include <QUuid>
@@ -31,22 +31,30 @@
 /**
  * \namespace plugin
  */
-namespace plugin{
+namespace plugin {
     /*!
      * @brief Interface d'un plugin
      */
-    class Plugin : public QObject{
+    class PluginInterface : public QThread{
+        Q_OBJECT
+
+        public:
+            virtual QString getPluginName() = 0;
+
+        public slots:
+            virtual void run() = 0;
+    };
+
+    class PluginImpl : public PluginInterface{
         Q_OBJECT
 
         friend void WsClient::sendMessage(QString);
 
+        public:
+            explicit PluginImpl(QObject *parent = 0);
         private:
             LocalSocketIpcClient *_localSocketIpClient;
             QMap<QUuid, WsClient*> _clients;
-
-        public:
-            explicit Plugin(QObject *parent = 0);
-            virtual QString getPluginName() = 0;
 
         protected:
             void sendMessage(QScriptValue message);
@@ -55,10 +63,7 @@ namespace plugin{
 
         private slots:
             void handlNewConnection(QString uuid);
-
-        public slots:
-            virtual void run() = 0;
     };
 }
-Q_DECLARE_INTERFACE(plugin::Plugin, "Ewapp plugin interface")
+Q_DECLARE_INTERFACE(plugin::PluginInterface, "Ewapp plugin interface")
 #endif // PLUGIN_HPP

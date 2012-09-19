@@ -24,26 +24,17 @@
  */
 
 #include <QSettings>
-#include <QFile>
-#include <iostream>
-#include <stdio.h>
-#include <fcntl.h>
-#include <signal.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/stat.h>
+
 #include "daemon/daemon.hpp"
 #include "utils/settingsmanager.hpp"
 #include "utils/logger.hpp"
 #include "controller.hpp"
+#include "utils/daemonize.hpp"
+#include <stdexcept>
+#include <segvcatch.h>
 
 
-bool daemonIsRunning();
-void daemonize(QString directory,Logger *LOG );
-void signal_handler(int sig);
-void freeLockFile();
 
-QString lockFilePath;
 
 /*!
  * @brief fonction main
@@ -54,17 +45,33 @@ QString lockFilePath;
  */
 int main(int argc, char *argv[]){
 
+    segvcatch::init_segv();
+    segvcatch::init_fpe();
 
     Logger *LOG = new Logger(QString(LOG_DIR)+QString(LOG_FILE), LOG_LVL);
 
     SettingsManager *settings = new SettingsManager(LOG);
-    lockFilePath = settings->getLockFile();
-    if(!daemonIsRunning()){
+    QString lockFilePath = settings->getLockFile();
+    if(!daemonIsRunning(lockFilePath)){
             std::cout << QObject::tr("Daemon started").toStdString() << std::endl;
             daemonize(settings->getDirectory(), LOG);
-            dns::Daemon *daemon = new dns::Daemon(argc, argv, settings, LOG);
 
-            int result = daemon->run();
+            dns::Daemon *daemon = new dns::Daemon(argc, argv, settings, LOG);
+            int result;
+            try{
+                result = daemon->run();
+            }
+            catch(std::exception& e){
+                LOG->fatal(e.what());
+                delete daemon;
+
+                return EXIT_FAILURE;
+            }
+            catch(...){
+                LOG->fatal(QObject::tr("Error"));
+                return EXIT_FAILURE;
+            }
+
             freeLockFile();
             delete daemon;
             return result;
@@ -76,61 +83,3 @@ int main(int argc, char *argv[]){
     return EXIT_SUCCESS;
 }
 
-bool daemonIsRunning(){
-    QFile lockFile(lockFilePath);
-    return lockFile.exists();
-}
-
-void daemonize(QString directory, Logger *LOG){
-    int i;
-    char str[10];
-    if(getppid()==1)
-        return; // déjà un deamon
-
-
-    i=fork();
-    if (i<0)/* fork error */{
-        LOG->error(QObject::tr("Fork error"));
-        exit(EXIT_FAILURE);
-    }
-    if (i>0)/* parent */
-        exit(EXIT_SUCCESS);
-
-
-    /* Enfant */
-    setsid(); //Nouveau process group
-
-    for (i=getdtablesize();i>=0;--i) close(i); // Fermeture de tous les descripteur
-        i=open("/dev/null",O_RDWR); dup(i); dup(i); // gestion de l'entrée/sortie standard
-
-    umask(027);
-
-    chdir(directory.toStdString().c_str()); //Changement de repertoire d'execution
-    sprintf(str,"%d\n",getpid());
-    QFile lockFile(lockFilePath);
-    lockFile.open(QIODevice::ReadWrite);
-    if (lockFile.write(str)<0){
-        LOG->error(QObject::tr("Error while opening lock file : ")+QString(lockFilePath));
-        exit(EXIT_FAILURE);
-    }
-    lockFile.close();
-
-    signal(SIGTERM,signal_handler); //Gestion du SIGTERM
-    signal(SIGKILL,signal_handler); //Gestion du SIGTERM
-}
-
-void signal_handler(int sig){
-    switch(sig) {
-        case SIGTERM:
-        case SIGKILL:
-            freeLockFile();
-            exit(EXIT_SUCCESS);
-        break;
-    }
-}
-
-void freeLockFile(){
-    QFile lockFile(lockFilePath);
-    lockFile.open(QIODevice::ReadWrite);
-    lockFile.remove();
-}

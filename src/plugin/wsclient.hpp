@@ -28,7 +28,7 @@
  */
 namespace plugin{
 
-    class Plugin;
+    class PluginImpl;
 
     /*!
      * @brief Client WebSocket
@@ -38,9 +38,9 @@ namespace plugin{
 
         private:
             QUuid uuid;
-            Plugin *plugin;
+            PluginImpl *plugin;
         public:
-            WsClient(QUuid uuid, Plugin *plugin);
+            WsClient(QUuid uuid, PluginImpl *plugin);
             void sendMessage(QString message);
             void sendMessage(QScriptValue message);
         signals:

@@ -19,17 +19,17 @@
 #include "plugin.hpp"
 
 namespace plugin{
-    Plugin::Plugin(QObject *parent) :
-        QObject(parent){
+    PluginImpl::PluginImpl(QObject *parent) {
+
     }
 
-    void Plugin::handlNewConnection(QString uuid){
+    void PluginImpl::handlNewConnection(QString uuid){
         WsClient *client = new WsClient(uuid, this);
         this->_clients.insert(uuid, client);
         emit newConnection(client);
     }
 
-    void Plugin::sendMessage(QScriptValue message){
+    void PluginImpl::sendMessage(QScriptValue message){
         message.toString();
     }
 }

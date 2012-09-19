@@ -21,6 +21,7 @@
 
 #include <QSettings>
 #include <QStringList>
+#include <QMap>
 #include "logger.hpp"
 /*!
  * @brief Gestion des options
@@ -34,20 +35,21 @@ class SettingsManager : public QObject{
         QSettings *settings;
 
         QString directory;
-        QStringList apps;
+        QMap<QString, QString> m_apps;
     public:
         SettingsManager(Logger *LOG);
         ~SettingsManager();
 
     public:
+        void reLoadConfig();
         QString getDirectory();
-        QStringList getApps();
-        QStringList getAppsNames();
+        QMap<QString, QString> getApps();
         QString getLockFile();
         QString getDaemonName();
 
     protected:
         void loadConfig();
+        QString getAppName(QString appPath);
         void getConfigFileLocation();
 };
 

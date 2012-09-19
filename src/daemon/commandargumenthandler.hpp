@@ -22,6 +22,7 @@
 #include <QObject>
 #include <QStringList>
 #include "../utils/settingsmanager.hpp"
+#include "../utils/logger.hpp"
 
 namespace dns{
 
@@ -32,10 +33,11 @@ namespace dns{
 
         private:
             Daemon *_daemon;
-            SettingsManager *settings;
+            SettingsManager *m_settings;
             QStringList     args;
+            Logger *LOG;
         public:
-            explicit CommandArgumentHandler(Daemon *parent, SettingsManager *settings);
+            explicit CommandArgumentHandler(Daemon *parent, SettingsManager *settings, Logger *LOG);
 
             /*!
              * @brief fonction appelée si le daemon est déjà lancé
@@ -44,8 +46,6 @@ namespace dns{
              * @return int
              */
             QString handleNewArgs(QStringList args);
-
-        protected:
 
             /**
              * @brief vérifie si les arguments sont valides

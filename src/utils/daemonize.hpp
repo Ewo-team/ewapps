@@ -16,8 +16,22 @@
 //
 //////////////////////////////////////////////////////////////////////////
 
-#include "pluginmanager.hpp"
+#ifndef DAEMONIZE_HPP
+#define DAEMONIZE_HPP
 
-PluginManager::PluginManager()
-{
-}
+#include <QFile>
+#include <iostream>
+#include <stdio.h>
+#include <fcntl.h>
+#include <signal.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include "logger.hpp"
+
+bool daemonIsRunning(QString lockFilePath);
+void daemonize(QString directory,Logger *LOG );
+void signal_handler(int sig);
+void freeLockFile();
+
+#endif // DAEMONIZE_HPP

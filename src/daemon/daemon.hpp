@@ -32,8 +32,10 @@
 #include "../utils/settingsmanager.hpp"
 #include "../utils/logger.hpp"
 #include "../localSocket/localsocketipcserver.hpp"
+#include "../plugin/plugin.hpp"
 #include "commandargumenthandler.hpp"
 
+class RunManager;
 
 namespace dns{
     /*!
@@ -46,11 +48,14 @@ namespace dns{
         friend class CommandArgumentHandler;
 
         protected:
+            RunManager *m_manager;
             Logger *LOG;
-            SettingsManager *settings;
-            CommandArgumentHandler *commandArgumentHandler;
-            LocalSocketIpcServer *server;
+            SettingsManager *m_settings;
+            CommandArgumentHandler *m_commandArgumentHandler;
+            LocalSocketIpcServer *m_server;
             bool isRunning;
+
+            QMap<QString, plugin::PluginImpl*> m_plugins;
         public:
 
 
@@ -62,7 +67,7 @@ namespace dns{
              * @param settings settings manager
              * @param LOG logger
              */
-            explicit Daemon(int & argc, char ** argv, SettingsManager *settings, Logger *LOG);
+            explicit Daemon(int & argc, char ** argv, SettingsManager *m_settings, Logger *LOG);
 
 
             /*!
@@ -72,20 +77,34 @@ namespace dns{
             ~Daemon();
 
             /*!
+             * @brief Arrête le daemon
+             *
+             */
+            void stop();
+
+            /*!
+             * @brief set run manager
+             */
+            void setRunManager(RunManager *manager);
+
+            QString loadPlugin(QString name);
+
+            QString stopPlugin(QString name);
+
+            QString getPluginState(QString name);
+
+        protected:
+
+            /*!
              * @brief run the application
              *
              * @return int le status de retour de l'application
              */
             int run();
 
-        protected:
-
-            /*!
-             * @brief Arrête le daemon
-             *
-             */
-            void stop();
-
+            void reloadConfig();
+            void runPlugin(QString name);
+            QString logAndReturn(QString msg);
         public slots:
 
             /*!

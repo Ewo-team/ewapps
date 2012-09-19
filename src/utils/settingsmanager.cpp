@@ -37,16 +37,24 @@ QString SettingsManager::getDirectory(){
 }
 
 void  SettingsManager::loadConfig(){
+    m_apps.clear();
     this->getConfigFileLocation();
     if(this->directory.isEmpty()){
-        LOG->error(tr("No config file"));
+        LOG->error(tr("No config file : ")+this->directory);
         return;
     }
-    QString filePath = this->directory+"ewapp.ini";
 
+    this->reLoadConfig();
+}
+
+void  SettingsManager::reLoadConfig(){
+    QString filePath = this->directory+"ewapp.ini";
     this->settings = new QSettings(filePath, QSettings::IniFormat);
 
-    this->apps = this->settings->value("apps/list").toStringList();
+    QStringList apps = this->settings->value("apps/list").toStringList();
+    foreach(QString app, apps){
+        m_apps.insert(this->getAppName(app), app);
+    }
 }
 
 
@@ -64,13 +72,13 @@ void  SettingsManager::getConfigFileLocation(){
     dirs.push_front("/etc");
     QString dir;
     foreach(dir, dirs){
-        QFile file(dir+"/ewapp.conf");
+        QFile file(dir+"/ewapp.ini");
         if(file.exists()){
                 this->directory = dir+"/";
             return;
         }
 
-        QFile fileSubDir(dir+"/ewapp/ewapp.conf");
+        QFile fileSubDir(dir+"/ewapp/ewapp.ini");
         if(fileSubDir.exists()){
             this->directory = dir+"/ewapp/";
             return;
@@ -78,24 +86,21 @@ void  SettingsManager::getConfigFileLocation(){
     }
 }
 
-QStringList SettingsManager::getApps(){
-    return this->apps;
+QMap<QString, QString> SettingsManager::getApps(){
+    return this->m_apps;
 }
 
-QStringList SettingsManager::getAppsNames(){
-    QStringList result;
-    foreach(QString appPath, this->apps){
-        //Get file name : "/etc/name.so" => name.so
-        QStringList tbl = appPath.split("/", QString::SkipEmptyParts);
-        QString app = tbl[tbl.size() - 1];
-        //Get the name "name.so" => name
-        result.push_back(app.split('.', QString::SkipEmptyParts).at(0));
-    }
-    return result;
+QString SettingsManager::getAppName(QString appPath){
+    //Get file name : "/etc/name.so" => name.so
+    QStringList tbl = appPath.split("/", QString::SkipEmptyParts);
+    QString app = tbl[tbl.size() - 1];
+    //Get the name "name.so" => name
+    return app.split('.', QString::SkipEmptyParts).at(0);
 }
 
 QString SettingsManager::getLockFile(){
-    return this->settings->value("lockFile").toString();
+    QString result = this->settings->value("lockFile").toString();
+    return result;
 }
 
 

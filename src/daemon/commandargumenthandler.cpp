@@ -21,14 +21,16 @@
 
 using namespace dns;
 
-CommandArgumentHandler::CommandArgumentHandler(Daemon *parent, SettingsManager *settings) :QObject(parent){
+CommandArgumentHandler::CommandArgumentHandler(Daemon *parent, SettingsManager *settings, Logger *LOG) :QObject(parent){
     this->_daemon = parent;
-    this->settings = settings;
+    this->m_settings = settings;
+    this->LOG = LOG;
 }
 
 QString CommandArgumentHandler::handleNewArgs(QStringList args){
     this->args = args;
 
+    this->m_settings->reLoadConfig();
     //Pas d'argument => action par defaut : start
     if(this->args.size() == 0 )
         return this->handleStart(QStringList());
@@ -63,11 +65,17 @@ bool CommandArgumentHandler::checkArgs(){
 }
 
 QString CommandArgumentHandler::handleStart(QStringList appsList){
-    QString result = tr("ewapp start\n");
-    QStringList apps = this->settings->getAppsNames();
+    QString result;
+    QStringList apps = this->m_settings->getApps().keys();
+    if(appsList.size() == 0)
+        appsList = this->m_settings->getApps().keys();
     foreach(QString app,appsList){
         if(apps.contains(app)){
-            result += app;
+            LOG->debug(tr("Try to launch application : ")+app);
+            result += this->_daemon->loadPlugin(app)+"\n";
+        }
+        else{
+            LOG->debug(app+ tr("does not exists"));
         }
     }
     return result;
@@ -79,7 +87,7 @@ QString CommandArgumentHandler::handleStop(QStringList appsList){
     if(appsList.isEmpty())
         this->_daemon->stop();
     else{
-        QStringList apps = this->settings->getAppsNames();
+        QStringList apps = this->m_settings->getApps().keys();
         foreach(QString app,appsList){
             if(apps.contains(app)){
                 result += app;
@@ -91,7 +99,7 @@ QString CommandArgumentHandler::handleStop(QStringList appsList){
 
 QString CommandArgumentHandler::handleRestart(QStringList appsList){
     QString result = tr("ewapp restart\n");
-    QStringList apps = this->settings->getAppsNames();
+    QStringList apps = this->m_settings->getApps().keys();
     foreach(QString app,appsList){
         if(apps.contains(app)){
             result += app;
@@ -102,7 +110,7 @@ QString CommandArgumentHandler::handleRestart(QStringList appsList){
 
 QString CommandArgumentHandler::handleReload(QStringList appsList){
     QString result = tr("ewapp reload\n");
-    QStringList apps = this->settings->getAppsNames();
+    QStringList apps = this->m_settings->getApps().keys();
     foreach(QString app,appsList){
         if(apps.contains(app)){
             result += app;
@@ -113,7 +121,7 @@ QString CommandArgumentHandler::handleReload(QStringList appsList){
 
 QString CommandArgumentHandler::handleState(QStringList appsList){
     QString result = tr("ewapp state\n");
-    QStringList apps = this->settings->getAppsNames();
+    QStringList apps = this->m_settings->getApps().keys();
     foreach(QString app,appsList){
         if(apps.contains(app)){
             result += app;
@@ -121,8 +129,6 @@ QString CommandArgumentHandler::handleState(QStringList appsList){
     }
     return result;
 }
-
-
 
 QString CommandArgumentHandler::displayUsage(){
     return tr("usage : ewo-app [action] [params]\n")

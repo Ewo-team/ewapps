@@ -20,7 +20,7 @@
 #include "plugin.hpp"
 
 namespace plugin{
-    WsClient::WsClient(QUuid uuid, Plugin *plugin){
+    WsClient::WsClient(QUuid uuid, PluginImpl *plugin){
         this->uuid      = uuid;
         this->plugin    = plugin;
     }
