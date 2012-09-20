@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <title>Ewapps by Ewo-team</title>
+  </head>
+
+  <body>
+    <div id="container">
+      <div class="inner">
+
+        <header>
+          <h1>Ewapps</h1>
+          <h2>Plateforme pour faire tourner les applications lourdes d'ewo</h2>
+        </header>
+
+        <section id="downloads" class="clearfix">
+          <a href="https://github.com/Ewo-team/ewapps/zipball/master" id="download-zip" class="button"><span>Download .zip</span></a>
+          <a href="https://github.com/Ewo-team/ewapps/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
+          <a href="https://github.com/Ewo-team/ewapps" id="view-on-github" class="button"><span>View on GitHub</span></a>
+        </section>
+
+        <hr>
+
+        <section id="main_content">
+          <h1>ewapps</h1>
+
+<p>version : 0.0.5</p>
+
+<p>Plateforme pour faire tourner les applications lourdes d'ewo. Elle lance un daemon qui lui même va gérer les cibles de vie des autes applications (IA, gestion d'evenments aléatoires, ...)</p>
+
+<h2>Installation</h2>
+
+<h3>Prérequis</h3>
+
+<p>Récupèrer le code source via git</p>
+
+<div class="highlight"><pre><span class="nv">$ </span>git clone 
+</pre></div>
+
+<p>L'application utilise la lib <a href="https://github.com/zaphoyd/websocketpp">websocket++</a> qui est définie entant que sous module, il faut donc exécuter la commande suivante :</p>
+
+<div class="highlight"><pre><span class="nv">$ </span>git submodule init
+<span class="nv">$ </span>git submodule update
+</pre></div>
+
+<p>Ensuite, étant donné qu'ewapps est basé sur Qt4 il faut avoir les libs d'installée, à voir en fonction de l'OS.
+Enfin, il faut récupérer <a href="http://code.google.com/p/segvcatch/">segvcatch</a>, une lib qui permet la gestion des erreurs dans les plugins, à téléchartger <a href="http://code.google.com/p/segvcatch/downloads/detail?name=segvcatch-0.9.1.zip&amp;can=2&amp;q=">ici</a></p>
+
+<h3>Installation</h3>
+
+<h4>Websocket++</h4>
+
+<p>Voir le guide de la lib <a href="https://github.com/zaphoyd/websocketpp/wiki/Build-Library">ici</a> </p>
+
+<h4>Segvcatch</h4>
+
+<p>C'est du cmake, donc dans le dossier du makefile</p>
+
+<div class="highlight"><pre><span class="nv">$ </span>cmake .
+<span class="nv">$ </span>make
+<span class="nv">$ </span>sudo make install
+</pre></div>
+
+<h4>Ewapps</h4>
+
+<p>Très simple aussi, il suffit de définir le type de build dans le fichier ewapp.pro (debug ou release dans la variable CONFIG) et après</p>
+
+<div class="highlight"><pre><span class="nv">$ </span>qmake ewapp.pro
+<span class="nv">$ </span>make
+</pre></div>
+
+<p>Et voila, y a plus qu'à</p>
+
+<h2>Utilisation</h2>
+
+<h3>Commandes</h3>
+
+<p>Il n'y a que quatre options :</p>
+
+<ul>
+<li>démarrer des applications (toutes si aucun argument)</li>
+</ul><div class="highlight"><pre><span class="nv">$ </span>ewapp start <span class="o">[</span>appname1<span class="o">]</span> <span class="o">[</span>appname2<span class="o">]</span> <span class="o">[</span>...<span class="o">]</span>
+</pre></div>
+
+<ul>
+<li>arrêter des applications (toutes si aucun argument)</li>
+</ul><div class="highlight"><pre><span class="nv">$ </span>ewapp stop <span class="o">[</span>appname1<span class="o">]</span> <span class="o">[</span>appname2<span class="o">]</span> <span class="o">[</span>...<span class="o">]</span>
+</pre></div>
+
+<ul>
+<li>redémarrer des applications (toutes si aucun argument)</li>
+</ul><div class="highlight"><pre><span class="nv">$ </span>ewapp restart <span class="o">[</span>appname1<span class="o">]</span> <span class="o">[</span>appname2<span class="o">]</span> <span class="o">[</span>...<span class="o">]</span>
+</pre></div>
+
+<ul>
+<li>connaitre l'état d'applications (toutes si aucun argument)</li>
+</ul><div class="highlight"><pre><span class="nv">$ </span>ewapp state <span class="o">[</span>appname1<span class="o">]</span> <span class="o">[</span>appname2<span class="o">]</span> <span class="o">[</span>...<span class="o">]</span>
+</pre></div>
+
+<h3>Configuration</h3>
+
+<p>La configuration elle se fait via fichier INI. Ce fichier s'appel ewapp.ini et doit se trouver dans /etc/ ou usr/local/etc/ oudans la PATH du système, et peut se trouver dans un sous dossier ewapp (ou pas).
+Sa structure est très simple</p>
+
+<div class="highlight"><pre><span class="k">[General]</span>
+<span class="c">; Fichier de lock</span>
+<span class="na">lockFile</span><span class="o">=</span><span class="s">/var/lock/ewapp.lock</span>
+<span class="c">; Nom à donner au daemon pour la communication interne</span>
+<span class="na">daemonName</span><span class="o">=</span><span class="s">ewapps</span>
+
+<span class="k">[apps]</span>
+<span class="c">; liste des applications à lancer</span>
+<span class="na">list</span><span class="o">=</span>   <span class="s">/usr/local/ewapp/admin.so,</span>
+<span class="s">    v3.so</span>
+</pre></div>
+
+<h2>Creation d'un plugin</h2>
+
+<p>Un plugin se présente sous la forme d'une librairie partagée (.so sous unix). Je dois encore voir les mécanismes de Qt à ce niveau là, mais il devront surement dériver d'une certaine classe, ou au moins posséder certaines méthodes.</p>
+
+<p>Un plugin va pouvoir accéder à certains services fournis :</p>
+
+<ul>
+<li>websocket : l'application aura le droit à un service websocket (un par appli pour éviter les collisons de nom, donc chaque appli fera sa popote interne pour différencier les fonctions). Un service de génération de tokken sera aussi fourni.</li>
+<li>système de log</li>
+<li>communication avec l'api ewo</li>
+<li>communication interne avec d'autres applis</li>
+<li>système d'envoie de mail</li>
+<li>gestion de fichier de config</li>
+<li>...</li>
+</ul><p>Tout ceci sera explicité dans la doc plus tard</p>
+        </section>
+
+        <footer>
+          Ewapps is maintained by <a href="https://github.com/Ewo-team">Ewo-team</a><br>
+          This page was generated by <a href="http://pages.github.com">GitHub Pages</a>. Tactile theme by <a href="http://twitter.com/jasonlong">Jason Long</a>.
+        </footer>
+
+        
+      </div>
+    </div>
+  </body>
+</html>
