@@ -16,20 +16,30 @@
 //
 //////////////////////////////////////////////////////////////////////////
 
-#include "plugin.hpp"
+#ifndef WEBSOCKETCONNECTION_HPP
+#define WEBSOCKETCONNECTION_HPP
 
-namespace plugin{
-    PluginImpl::PluginImpl(QObject *parent) {
+#include <QObject>
+#include <websocketpp/websocketpp.hpp>
 
-    }
+namespace ewapps{
 
-    void PluginImpl::handlNewConnection(QString uuid){
-        WsClient *client = new WsClient(uuid, this);
-        this->_clients.insert(uuid, client);
-        emit newConnection(client);
-    }
+    class WebSocketConnection: public QObject{
+        Q_OBJECT
+        protected:
+            websocketpp::server::connection_ptr m_connection;
+        public:
+            WebSocketConnection(websocketpp::server::connection_ptr connection);
 
-    void PluginImpl::sendMessage(QScriptValue message){
-        message.toString();
-    }
+            void close();
+            void receiveNewMessage(QString msg);
+
+            void send(QString msg);
+
+        signals:
+            void closed();
+            void newMessage(QString msg);
+    };
 }
+
+#endif // WEBSOCKETCONNECTION_HPP

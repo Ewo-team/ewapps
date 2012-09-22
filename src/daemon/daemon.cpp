@@ -26,21 +26,23 @@
 #include "daemon.hpp"
 #include <QtCore/QDebug>
 #include <QObject>
-#include <iostream>
 
 //#include <websocketpp/websocketpp.hpp>
 
-using namespace dns;
-using namespace plugin;
+using namespace ewapps;
 
 Daemon::Daemon(int & argc, char ** argv,  SettingsManager *settings, Logger *LOG) :QCoreApplication(argc, argv){
     this->m_settings = settings;
     this->LOG = LOG;
-    this->m_server   = new LocalSocketIpcServer(settings->getDaemonName(), this);
+    this->m_server   = new LocalSocketIpcServer(settings->getDaemonName(), this->LOG);
     this->m_commandArgumentHandler = new CommandArgumentHandler(this, settings, LOG);
     this->isRunning = true;
 
+    short port = this->m_settings->getWsPort();
+    this->m_ws_server = new WebSocketServer(port, this->LOG);
+
     connect(this->m_server, SIGNAL(messageReceived(ClientResponse*)), this, SLOT(handleCommand(ClientResponse*)));
+    connect(this->m_ws_server,SIGNAL(newConnection(QString,WebSocketConnection*)), this, SLOT(newWsConnection(QString,WebSocketConnection*)));
 }
 
 Daemon::~Daemon(){
@@ -52,6 +54,7 @@ Daemon::~Daemon(){
 int Daemon::run(){
     LOG->info(tr("ewapp launched"));
     this->m_commandArgumentHandler->handleStart(QStringList());
+    this->m_ws_server->start();
     return this->exec();
 }
 
@@ -68,7 +71,7 @@ QString Daemon::loadPlugin(QString name){
     this->reloadConfig();
 
     if(this->m_plugins.keys().contains(name)){
-        PluginImpl *plugin = this->m_plugins[name];
+        PluginInterface *plugin = this->m_plugins[name];
         if(!plugin->isRunning()){
             this->runPlugin(name);
             return this->logAndReturn(name+tr(" started"));
@@ -80,9 +83,14 @@ QString Daemon::loadPlugin(QString name){
 
     if(apps.keys().contains(name)){
         QPluginLoader loader(apps[name]); // On fait ensuite la même chose que pour un seul plugin.
-        if(QObject *plugin = loader.instance()){
-            this->m_plugins.insert(name,  qobject_cast<PluginImpl *>(plugin));
-                this->runPlugin(name);
+        if(QObject *newPlugin = loader.instance()){
+            this->LOG->info(tr("new PLugin : ") + name);
+
+            PluginInterface *plugin = qobject_cast<PluginInterface*>(newPlugin);
+            this->m_plugins.insert(name,  plugin);
+            this->m_ws_server->addApp(name, plugin);
+            this->runPlugin(name);
+
             return this->logAndReturn(name+tr(" started"));
         }
         return this->logAndReturn(tr("Unable to load plugin ")+name+tr(" location : ")+apps[name]);
@@ -92,7 +100,7 @@ QString Daemon::loadPlugin(QString name){
 
 QString Daemon::stopPlugin(QString name){
     if(this->m_plugins.keys().contains(name)){
-        PluginImpl *plugin = this->m_plugins[name];
+        PluginInterface *plugin = this->m_plugins[name];
         if(plugin->isRunning()){
             plugin->quit();
             return this->logAndReturn(name+tr(" stopped"));
@@ -104,24 +112,6 @@ QString Daemon::stopPlugin(QString name){
 
 QString Daemon::getPluginState(QString name){
     return name;
-}
-
-void Daemon::handleCommand(ClientResponse *response){
-    LOG->info(tr("New message : ")+response->getMessage());
-    QString message = response->getMessage();
-    if(message == NULL || message.size() == 0)
-        return;
-    //Message Json => à envoyer à la bonne appli
-    if(message.at(0) == QChar('[') || message.at(0) == QChar('{')){
-
-    }
-    else{
-        QStringList args = message.split(",", QString::SkipEmptyParts);
-        response->sendResponse(this->m_commandArgumentHandler->handleNewArgs(args));
-    }
-    if(!this->isRunning){
-        this->quit();
-    }
 }
 
 void Daemon::reloadConfig(){
@@ -145,3 +135,29 @@ QString Daemon::logAndReturn(QString msg){
     LOG->info(msg);
     return msg;
 }
+
+
+void Daemon::handleCommand(ClientResponse *response){
+    LOG->info(tr("New message : ")+response->getMessage());
+    QString message = response->getMessage();
+    if(message == NULL || message.size() == 0)
+        return;
+    //Message Json => à envoyer à la bonne appli
+    if(message.at(0) == QChar('[') || message.at(0) == QChar('{')){
+
+    }
+    else{
+        QStringList args = message.split(",", QString::SkipEmptyParts);
+        response->sendResponse(this->m_commandArgumentHandler->handleNewArgs(args));
+    }
+    if(!this->isRunning){
+        this->quit();
+    }
+}
+
+void Daemon::newWsConnection(QString appName, WebSocketConnection *co){
+    if(this->m_plugins.keys().contains(appName)){
+        this->m_plugins[appName]->handleNewConnection_intern(co);
+    }
+}
+

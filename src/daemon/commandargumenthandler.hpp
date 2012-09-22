@@ -21,10 +21,10 @@
 
 #include <QObject>
 #include <QStringList>
-#include "../utils/settingsmanager.hpp"
-#include "../utils/logger.hpp"
+#include "../common/utils/settingsmanager.hpp"
+#include "../common/utils/logger.hpp"
 
-namespace dns{
+namespace ewapps{
 
     class Daemon;
 

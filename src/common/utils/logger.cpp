@@ -20,7 +20,8 @@
 #include <QFile>
 #include <QTime>
 #include <QDate>
-#include <iostream>
+
+using namespace ewapps;
 
 Logger::Logger(QString filePath, LogLvl lvl){
     this->logFile = filePath;

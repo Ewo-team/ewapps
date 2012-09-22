@@ -19,7 +19,7 @@
 #include "commandargumenthandler.hpp"
 #include "daemon.hpp"
 
-using namespace dns;
+using namespace ewapps;
 
 CommandArgumentHandler::CommandArgumentHandler(Daemon *parent, SettingsManager *settings, Logger *LOG) :QObject(parent){
     this->_daemon = parent;
@@ -40,15 +40,15 @@ QString CommandArgumentHandler::handleNewArgs(QStringList args){
     //Autres arguments
     QStringList otherArgs(this->args);
     otherArgs.removeAt(0);
-    if(action == START)
+    if(action == ACTION_START)
         return this->handleStart(otherArgs);
-    if(action == STOP)
+    if(action == ACTION_STOP)
         return this->handleStop(otherArgs);
-    if(action == RESTART)
+    if(action == ACTION_RESTART)
         return this->handleRestart(otherArgs);
-    if(action == RELOAD)
+    if(action == ACTION_RELOAD)
         return this->handleReload(otherArgs);
-    if(action == STATE)
+    if(action == ACTION_STATE)
         return this->handleState(otherArgs);
     return  this->displayUsage();
 }
@@ -57,11 +57,11 @@ bool CommandArgumentHandler::checkArgs(){
     if(this->args.size() == 0 )
         return false;
     QString action(this->args.at(0));
-    return action == START      ||
-            action == STOP       ||
-            action == RESTART    ||
-            action == RELOAD     ||
-            action == STATE;
+    return action == ACTION_START      ||
+            action == ACTION_STOP       ||
+            action == ACTION_RESTART    ||
+            action == ACTION_RELOAD     ||
+            action == ACTION_STATE;
 }
 
 QString CommandArgumentHandler::handleStart(QStringList appsList){

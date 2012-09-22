@@ -4,6 +4,8 @@
 #
 #-------------------------------------------------
 
+VERSION=0.0.6
+
 TEMPLATE = app
 
 QT       += core network script
@@ -15,11 +17,11 @@ CONFIG   -= app_bundle
 
 
 
-DEFINES += START=\\\"start\\\" \
-        STOP=\\\"stop\\\" \
-        RESTART=\\\"restart\\\" \
-        RELOAD=\\\"reload\\\" \
-        STATE=\\\"state\\\" \
+DEFINES += ACTION_START=\\\"start\\\" \
+        ACTION_STOP=\\\"stop\\\" \
+        ACTION_RESTART=\\\"restart\\\" \
+        ACTION_RELOAD=\\\"reload\\\" \
+        ACTION_STATE=\\\"state\\\" \
         \
         DAEMON=0\
         CONTROLLER=1\
@@ -30,32 +32,34 @@ DEFINES += START=\\\"start\\\" \
         LOG_FILE=\\\"ewapp.log\\\"
 
 
-LIBS += -lsegvcatch -Bdynamic -lwebsocketpp
+LIBS += -lpthread  -lsegvcatch -Bdynamic -lwebsocketpp -lboost_system -lboost_date_time -lboost_regex -lboost_random -lboost_program_options -lboost_thread
 
 HEADERS += src/daemon/daemon.hpp \
-    src/daemon/commandargumenthandler.hpp \
-    src/localSocket/localsocketipcserver.hpp \
-    src/localSocket/localsocketipcclient.hpp \
-    src/localSocket/clientresponse.hpp \
-    src/utils/settingsmanager.hpp \
-    src/utils/logger.hpp \
-    src/utils/daemonize.hpp \
     src/controller.hpp \
-    src/plugin/plugin.hpp \
-    src/plugin/wsclient.hpp
+    src/daemon/commandargumenthandler.hpp \
+    src/wsSocket/websocketserver.hpp \
+    src/localSocket/localsocketipcserver.hpp \
+    src/utils/daemonize.hpp \
+    src/common/localSocket/localsocketipcclient.hpp \
+    src/common/localSocket/clientresponse.hpp \
+    src/common/utils/settingsmanager.hpp \
+    src/common/utils/logger.hpp \
+    src/common/plugin/plugin.hpp \
+    src/common/wsSocket/websocketconnection.hpp
 
 SOURCES += src/main.cpp \
+    src/controller.cpp \
     src/daemon/daemon.cpp \
     src/daemon/commandargumenthandler.cpp \
+    src/wsSocket/websocketserver.cpp \
     src/localSocket/localsocketipcserver.cpp \
-    src/localSocket/localsocketipcclient.cpp \
-    src/localSocket/clientresponse.cpp \
-    src/utils/settingsmanager.cpp \
-    src/utils/logger.cpp \
     src/utils/daemonize.cpp \
-    src/controller.cpp \
-    src/plugin/plugin.cpp \
-    src/plugin/wsclient.cpp
+    src/common/localSocket/localsocketipcclient.cpp \
+    src/common/localSocket/clientresponse.cpp \
+    src/common/utils/settingsmanager.cpp \
+    src/common/utils/logger.cpp \
+    src/common/plugin/plugin.cpp \
+    src/common/wsSocket/websocketconnection.cpp
 
 CONFIG(release, debug|release) {
     DESTDIR = release

@@ -16,36 +16,36 @@
 //
 //////////////////////////////////////////////////////////////////////////
 
-#ifndef WSCLIENT_HPP
-#define WSCLIENT_HPP
+#ifndef LOGGER_HPP
+#define LOGGER_HPP
 
-#include <QObject>
-#include <QUuid>
-#include <QtScript>
+#include <QString>
 
-/**
- * \namespace plugin
- */
-namespace plugin{
+enum LogLvl{
+    DEBUG,
+    INFO,
+    WARNING,
+    ERROR,
+    FATAL
+};
 
-    class PluginImpl;
-
+namespace ewapps{
     /*!
-     * @brief Client WebSocket
+     * @brief classe de log
      */
-    class WsClient: public QObject{
-        Q_OBJECT
-
+    class Logger{
         private:
-            QUuid uuid;
-            PluginImpl *plugin;
+            QString logFile;
+            LogLvl lvl;
         public:
-            WsClient(QUuid uuid, PluginImpl *plugin);
-            void sendMessage(QString message);
-            void sendMessage(QScriptValue message);
-        signals:
-            QString newMessage();
-            void close();
+            Logger(QString filePath, LogLvl lvl);
+
+            void log(QString message, LogLvl lvl);
+            void debug(QString message);
+            void info(QString message);
+            void warning(QString message);
+            void error(QString message);
+            void fatal(QString message);
     };
 }
-#endif // WSCLIENT_HPP
+#endif // LOGGER_HPP

@@ -26,15 +26,15 @@
 #include <QSettings>
 
 #include "daemon/daemon.hpp"
-#include "utils/settingsmanager.hpp"
-#include "utils/logger.hpp"
+#include "common/utils/settingsmanager.hpp"
+#include "common/utils/logger.hpp"
 #include "controller.hpp"
 #include "utils/daemonize.hpp"
 #include <stdexcept>
 #include <segvcatch.h>
 
 
-
+using namespace ewapps;
 
 /*!
  * @brief fonction main
@@ -56,7 +56,7 @@ int main(int argc, char *argv[]){
             std::cout << QObject::tr("Daemon started").toStdString() << std::endl;
             daemonize(settings->getDirectory(), LOG);
 
-            dns::Daemon *daemon = new dns::Daemon(argc, argv, settings, LOG);
+            Daemon *daemon = new Daemon(argc, argv, settings, LOG);
             int result;
             try{
                 result = daemon->run();

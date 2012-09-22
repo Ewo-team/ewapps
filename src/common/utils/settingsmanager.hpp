@@ -27,30 +27,32 @@
  * @brief Gestion des options
  * Ouvre les fichiers de conf et récupère les valeurs, peut aussi les modifier
  */
-class SettingsManager : public QObject{
-        Q_OBJECT
+namespace ewapps{
+    class SettingsManager : public QObject{
+            Q_OBJECT
 
-    protected:
-        Logger *LOG;
-        QSettings *settings;
+        protected:
+            Logger *LOG;
+            QSettings *settings;
 
-        QString directory;
-        QMap<QString, QString> m_apps;
-    public:
-        SettingsManager(Logger *LOG);
-        ~SettingsManager();
+            QString directory;
+            QMap<QString, QString> m_apps;
+        public:
+            SettingsManager(Logger *LOG);
+            ~SettingsManager();
 
-    public:
-        void reLoadConfig();
-        QString getDirectory();
-        QMap<QString, QString> getApps();
-        QString getLockFile();
-        QString getDaemonName();
+        public:
+            void reLoadConfig();
+            QString getDirectory();
+            QMap<QString, QString> getApps();
+            QString getLockFile();
+            QString getDaemonName();
+            short getWsPort();
 
-    protected:
-        void loadConfig();
-        QString getAppName(QString appPath);
-        void getConfigFileLocation();
-};
-
+        protected:
+            void loadConfig();
+            QString getAppName(QString appPath);
+            void getConfigFileLocation();
+    };
+}
 #endif // SETTINGSMANAGER_HPP

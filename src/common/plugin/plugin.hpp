@@ -24,46 +24,41 @@
 #include <QMap>
 #include <QUuid>
 #include <QtScript>
-#include "wsclient.hpp"
-#include "../localSocket/localsocketipcclient.hpp"
+#include <QList>
+#include "../wsSocket/websocketconnection.hpp"
 
 
-/**
- * \namespace plugin
- */
-namespace plugin {
+namespace ewapps {
     /*!
      * @brief Interface d'un plugin
      */
     class PluginInterface : public QThread{
         Q_OBJECT
-
-        public:
-            virtual QString getPluginName() = 0;
-
         public slots:
             virtual void run() = 0;
-    };
 
-    class PluginImpl : public PluginInterface{
-        Q_OBJECT
-
-        friend void WsClient::sendMessage(QString);
-
-        public:
-            explicit PluginImpl(QObject *parent = 0);
-        private:
-            LocalSocketIpcClient *_localSocketIpClient;
-            QMap<QUuid, WsClient*> _clients;
-
-        protected:
-            void sendMessage(QScriptValue message);
+            virtual void handleNewConnection(WebSocketConnection *connection) = 0;
+            virtual void handleNewConnection_intern(WebSocketConnection *connection) = 0;
+            virtual void handleCloseConnection_intern() = 0;
         signals:
-            void newConnection(WsClient *newClient);
-
-        private slots:
-            void handlNewConnection(QString uuid);
+            void newConnection(WebSocketConnection *connection);
     };
 }
-Q_DECLARE_INTERFACE(plugin::PluginInterface, "Ewapp plugin interface")
+Q_DECLARE_INTERFACE(ewapps::PluginInterface, "Ewapp plugin interface")
+namespace ewapps {
+    class PluginImpl : public PluginInterface{
+        Q_OBJECT
+        Q_INTERFACES(ewapps::PluginInterface)
+
+        public:
+            explicit PluginImpl();
+        protected:
+            QList<WebSocketConnection*> m_connections;
+        protected:
+            void broadCast(QString msg);
+        public slots:
+            virtual void handleNewConnection_intern(WebSocketConnection *connection);
+            virtual void handleCloseConnection_intern();
+    };
+}
 #endif // PLUGIN_HPP

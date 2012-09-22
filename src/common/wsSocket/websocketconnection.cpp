@@ -16,21 +16,22 @@
 //
 //////////////////////////////////////////////////////////////////////////
 
-#include "wsclient.hpp"
-#include "plugin.hpp"
+#include "websocketconnection.hpp"
 
-namespace plugin{
-    WsClient::WsClient(QUuid uuid, PluginImpl *plugin){
-        this->uuid      = uuid;
-        this->plugin    = plugin;
-    }
+using namespace ewapps;
 
-    void WsClient::sendMessage(QString message){
-        QScriptEngine engine;
-        this->sendMessage(engine.evaluate(message));
-    }
+WebSocketConnection::WebSocketConnection(websocketpp::server::connection_ptr connection){
+    this->m_connection = connection;
+}
 
-    void WsClient::sendMessage(QScriptValue message){
+void WebSocketConnection::close(){
+    emit closed();
+}
 
-    }
+void WebSocketConnection::receiveNewMessage(QString msg){
+    emit newMessage(msg);
+}
+
+void WebSocketConnection::send(QString msg){
+    this->m_connection->send(msg.toStdString());
 }

@@ -17,8 +17,10 @@
 //////////////////////////////////////////////////////////////////////////
 
 #include "controller.hpp"
-#include "localSocket/localsocketipcclient.hpp"
+#include "common/localSocket/localsocketipcclient.hpp"
 #include <iostream>
+
+using namespace ewapps;
 
 Controller::Controller(int &argc, char **argv, SettingsManager *settings) : QCoreApplication(argc, argv){
     this->settings = settings;

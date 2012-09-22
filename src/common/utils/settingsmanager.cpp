@@ -19,8 +19,8 @@
 #include "settingsmanager.hpp"
 #include <QFile>
 #include <QTextStream>
-#include <iostream>
 
+using namespace ewapps;
 
 SettingsManager::SettingsManager(Logger *LOG){
     this->LOG = LOG;
@@ -106,4 +106,12 @@ QString SettingsManager::getLockFile(){
 
 QString SettingsManager::getDaemonName(){
     return this->settings->value("daemonName").toString();
+}
+
+
+short SettingsManager::getWsPort(){
+    if(!this->settings->contains("wsPort")){
+        return 8088;
+    }
+    return this->settings->value("wsPort").toInt();
 }

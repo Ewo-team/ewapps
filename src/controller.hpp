@@ -23,29 +23,30 @@
 #include <QObject>
 #include <QCoreApplication>
 #include <QStringList>
-#include "utils/settingsmanager.hpp"
+#include "common/utils/settingsmanager.hpp"
 
-/*!
- * @brief controle du daemon
- * Permet d'envoyer des commandes au daemon
- */
-class Controller : public QCoreApplication{
-        Q_OBJECT
+namespace ewapps{
+    /*!
+     * @brief controle du daemon
+     * Permet d'envoyer des commandes au daemon
+     */
+    class Controller : public QCoreApplication{
+            Q_OBJECT
 
-    protected:
-        QStringList args;
-        SettingsManager *settings;
+        protected:
+            QStringList args;
+            SettingsManager *settings;
 
-    public:
-        explicit Controller(int &argc, char **argv, SettingsManager *settings);
+        public:
+            explicit Controller(int &argc, char **argv, SettingsManager *settings);
 
-        
-    signals:
-        
-    public slots:
-        int run();
-        void displayResponse(QString);
-        
-};
 
+        signals:
+
+        public slots:
+            int run();
+            void displayResponse(QString);
+
+    };
+}
 #endif // CONTROLLER_HPP

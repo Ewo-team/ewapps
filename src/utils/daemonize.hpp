@@ -27,11 +27,18 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include "logger.hpp"
+#include "../common/utils/logger.hpp"
+
+namespace ewapps{
+    class Daemon;
+}
+
+using namespace ewapps;
 
 bool daemonIsRunning(QString lockFilePath);
 void daemonize(QString directory,Logger *LOG );
 void signal_handler(int sig);
 void freeLockFile();
+void setDaemon(Daemon *daemon);
 
 #endif // DAEMONIZE_HPP

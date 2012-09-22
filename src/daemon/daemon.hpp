@@ -29,15 +29,16 @@
 
 #include <QCoreApplication>
 #include <QStringList>
-#include "../utils/settingsmanager.hpp"
-#include "../utils/logger.hpp"
 #include "../localSocket/localsocketipcserver.hpp"
-#include "../plugin/plugin.hpp"
+#include "../common/utils/settingsmanager.hpp"
+#include "../common/utils/logger.hpp"
+#include "../common/plugin/plugin.hpp"
 #include "commandargumenthandler.hpp"
+#include "../wsSocket/websocketserver.hpp"
 
 class RunManager;
 
-namespace dns{
+namespace ewapps{
     /*!
      * @brief classe principale
      * C'est une classe qui va gérer le cycle de vie du daemon
@@ -55,7 +56,9 @@ namespace dns{
             LocalSocketIpcServer *m_server;
             bool isRunning;
 
-            QMap<QString, plugin::PluginImpl*> m_plugins;
+            QMap<QString, PluginInterface*> m_plugins;
+
+            WebSocketServer *m_ws_server;
         public:
 
 
@@ -93,14 +96,14 @@ namespace dns{
 
             QString getPluginState(QString name);
 
-        protected:
-
             /*!
              * @brief run the application
              *
              * @return int le status de retour de l'application
              */
             int run();
+
+        protected:
 
             void reloadConfig();
             void runPlugin(QString name);
@@ -113,6 +116,8 @@ namespace dns{
              * @param response
              */
             void handleCommand(ClientResponse *response);
+
+            void newWsConnection(QString appName, WebSocketConnection *co);
     };
 }
 #endif // DAEMON_HPP

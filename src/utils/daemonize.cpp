@@ -17,8 +17,10 @@
 //////////////////////////////////////////////////////////////////////////
 
 #include "daemonize.hpp"
+#include "../daemon/daemon.hpp"
 
 QString lockFilePathGlob;
+ewapps::Daemon *daemonGlob;
 
 bool daemonIsRunning(QString lockFilePath){
     lockFilePathGlob = lockFilePath;
@@ -44,10 +46,10 @@ void daemonize(QString directory, Logger *LOG){
 
     // Enfant
     setsid(); //Nouveau process group
-
+    */
    // for (i=getdtablesize();i>=0;--i) close(i); // Fermeture de tous les descripteur
    //     i=open("/dev/null",O_RDWR); dup(i); dup(i); // gestion de l'entrée/sortie standard
-    */
+
     umask(027);
 
     chdir(directory.toStdString().c_str()); //Changement de repertoire d'execution
@@ -71,6 +73,8 @@ void signal_handler(int sig){
         case SIGKILL:
         case SIGSEGV:
             freeLockFile();
+            if(daemonGlob != NULL)
+                delete daemonGlob;
             exit(EXIT_SUCCESS);
         break;
     }
@@ -80,4 +84,8 @@ void freeLockFile(){
     QFile lockFile(lockFilePathGlob);
     lockFile.open(QIODevice::ReadWrite);
     lockFile.remove();
+}
+
+void setDaemon(Daemon *daemon){
+    daemonGlob = daemon;
 }

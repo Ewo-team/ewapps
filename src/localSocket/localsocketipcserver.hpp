@@ -2,13 +2,15 @@
 #define LOCALSOCKETIPCSERVER_HPP
 
 #include <QtNetwork/QLocalServer>
-#include "clientresponse.hpp"
+#include "../common/localSocket/clientresponse.hpp"
+#include "../common/utils/logger.hpp"
 
-class LocalSocketIpcServer : public QObject
-{
-        Q_OBJECT
+class LocalSocketIpcServer : public QObject{
+    Q_OBJECT
+    protected:
+        ewapps::Logger *LOG;
     public:
-        LocalSocketIpcServer(QString servername, QObject *parent);
+        LocalSocketIpcServer(QString servername, ewapps::Logger *LOG);
         ~LocalSocketIpcServer();
 
     signals:

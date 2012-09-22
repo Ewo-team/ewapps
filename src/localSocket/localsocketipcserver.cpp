@@ -1,12 +1,11 @@
 #include "localsocketipcserver.hpp"
 #include <QLocalSocket>
-#include <iostream>
 
-LocalSocketIpcServer::LocalSocketIpcServer(QString servername, QObject *parent)
-    :QObject(parent) {
+LocalSocketIpcServer::LocalSocketIpcServer(QString servername, ewapps::Logger *LOG) : QObject() {
     m_server = new QLocalServer(this);
+    this->LOG = LOG;
     if (!m_server->listen(servername)) {
-        qDebug() << "Not able to start the Server";
+        this->LOG->error(tr("Not able to start the local socket server"));
     }
 
     connect(m_server, SIGNAL(newConnection()), this, SLOT(socket_new_connection()));
