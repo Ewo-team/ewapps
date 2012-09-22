@@ -98,15 +98,55 @@ list=	/usr/local/ewapp/admin.so,
 Creation d'un plugin
 -----
 
-Un plugin se présente sous la forme d'une librairie partagée (.so sous unix). Je dois encore voir les mécanismes de Qt à ce niveau là, mais il devront surement dériver d'une certaine classe, ou au moins posséder certaines méthodes.
+Un plugin se présente sous la forme d'une librairie partagée (.so sous unix).
+Concraitement voici comment faire via un petit exemple. Si on veut faire un chat voici comment faire :
 
-Un plugin va pouvoir accéder à certains services fournis :
-* websocket : l'application aura le droit à un service websocket (un par appli pour éviter les collisons de nom, donc chaque appli fera sa popote interne pour différencier les fonctions). Un service de génération de tokken sera aussi fourni.
-* système de log
-* communication avec l'api ewo
-* communication interne avec d'autres applis
-* système d'envoie de mail
-* gestion de fichier de config
-* ...
+créer un fichier de projet QT chat.pro
 
-Tout ceci sera explicité dans la doc plus tard
+```bash
+TEMPLATE = lib
+
+QT       += core network script
+QT       -= gui
+
+TARGET   = chat
+CONFIG   += release plugin
+CONFIG   -= app_bundle
+```
+
+Dans ce projet, il faut ensuite créer une classe principale, Chat, avec le header suivant :
+
+```Cpp
+
+#ifndef CHAT_HPP
+#define CHAT_HPP
+
+#include "common/plugin/plugin.hpp"
+#include "common/wsSocket/websocketconnection.hpp"
+
+class Chat : public ewapps::PluginImpl{
+    Q_OBJECT
+    Q_INTERFACES(ewapps::PluginInterface)
+
+    public:
+        explicit Chat();
+        virtual QString getPluginName();
+    signals:
+        
+    public slots:
+        virtual void run();
+        virtual void handleNewConnection(ewapps::WebSocketConnection *connection);
+        void handleNewMessage(QString msg);
+};
+#endif // CHAT_HPP
+```
+
+toutes les dépendances pour faire un plugin sont dans le sous dossier common/
+
+Une dernière chose, dans le fichier d'implémentation de la classe chat il faut ajouter, en dernière ligne:
+
+```cpp
+Q_EXPORT_PLUGIN2(chat, Chat);
+```
+
+chat est le nom du plugin (variable TARGET), et Chat celui de la classe qui implémente le plugin
